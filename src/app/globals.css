@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #070807;
-  --foreground: #e9e3d3;
+  --background: #fbf7ec;
+  --foreground: #19363b;
 }
 
 @theme inline {
@@ -48,8 +48,8 @@ button {
 }
 
 ::selection {
-  color: #090a09;
-  background: #d8c078;
+  color: #17343a;
+  background: #f3c886;
 }
 
 ::-webkit-scrollbar {
@@ -57,10 +57,10 @@ button {
 }
 
 ::-webkit-scrollbar-track {
-  background: #080908;
+  background: #efe8d6;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #333229;
-  border: 2px solid #080908;
+  background: #8ca19b;
+  border: 2px solid #efe8d6;
 }

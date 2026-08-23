@@ -8,18 +8,20 @@ import {
   ChevronRight,
   CircleDashed,
   Code2,
+  Compass,
   Download,
   Eye,
   FileCode2,
   Fingerprint,
   GitBranch,
   Heart,
-  Orbit,
   Play,
   RefreshCw,
   ScanLine,
   Sparkles,
+  TreePine,
   TriangleAlert,
+  Wind,
   X,
 } from "lucide-react";
 import Link from "next/link";
@@ -309,7 +311,7 @@ export function StudioApp() {
       <div className={styles.ambient} />
       <header className={styles.topbar}>
         <Link className={styles.brand} href="/">
-          <span className={styles.brandMark}><Orbit size={18} /></span>
+          <span className={styles.brandMark}><Compass size={18} /></span>
           <span>EXPERIENCE//COMPILER</span>
         </Link>
         <div className={styles.runIdentity}>
@@ -330,7 +332,7 @@ export function StudioApp() {
         <div>
           <span className={styles.eyebrow}>PROJECT / ORBITAL ARCHIVE</span>
           <h1>Genome Lens</h1>
-          <p>One rule. Every layer of truth behind it.</p>
+          <p>Walk from captured experience to portable creative memory.</p>
         </div>
         <div className={styles.headerActions}>
           <button
@@ -349,6 +351,30 @@ export function StudioApp() {
               <><Download size={14} /> Compile pack</>
             )}
           </button>
+        </div>
+      </section>
+
+      <section className={styles.questCoach}>
+        <span className={styles.coachAvatar}><Wind size={21} /></span>
+        <div>
+          <small>GATI / GUIDED MODE</small>
+          <strong>
+            {activeReference === "fixture"
+              ? "Choose Reference B to inspect a real public-web capture."
+              : realWebJudgment === "unreviewed"
+                ? "Open the observed rule, then Keep or Reject it. Evidence will not change."
+                : tab === "observe"
+                  ? "Judgment recorded. Continue to Synthesize to see whether the rule entered the Project Genome."
+                  : tab === "synthesize"
+                    ? "Select a Project Rule to inspect its source and anti-copy constraint."
+                    : "Compile the verified genome into a portable Experience Pack."}
+          </strong>
+        </div>
+        <div className={styles.coachSteps}>
+          <span data-done>1 · Choose</span>
+          <span data-done={activeReference === "real-web" || undefined}>2 · Observe</span>
+          <span data-done={realWebJudgment !== "unreviewed" || undefined}>3 · Judge</span>
+          <span data-done={tab === "compile" || undefined}>4 · Compile</span>
         </div>
       </section>
 
@@ -478,13 +504,13 @@ export function StudioApp() {
               </p>
             </div>
             <div className={styles.genomeArtifact}>
-              <div className={styles.artifactHalo} />
-              <div className={styles.artifactRingOne} />
-              <div className={styles.artifactRingTwo} />
-              <div className={styles.artifactCore}><Orbit size={28} /></div>
-              {currentProject.rules.map((rule, index) => (
-                <span key={rule.id} style={{ "--i": index } as React.CSSProperties}>{rule.id}</span>
-              ))}
+              <div className={styles.genomeCanopy}>
+                {currentProject.rules.map((rule, index) => (
+                  <span data-kind={rule.transformation} key={rule.id} style={{ "--i": index } as React.CSSProperties}>{rule.id}</span>
+                ))}
+              </div>
+              <div className={styles.genomeStem} />
+              <div className={styles.genomeRoot}><TreePine size={27} /><span>PROJECT<br />GENOME</span></div>
             </div>
           </section>
 

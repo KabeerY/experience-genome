@@ -29,14 +29,13 @@ That is why `epistemicBasis` and `humanJudgment` are separate fields. A rule can
 
 ## What a judge can do
 
-1. Experience the four-act WebGL story: False Reading → Perception → Memory → Compilation.
-2. Open **Genome Lens** and click a Genome Rule.
-3. Switch between the controlled fixture and a real persisted Linear capture.
-4. Inspect a complete path: state/action/state → delta → inference → human judgment.
-5. Mark the real reference **Keep** and watch it enter the multi-reference Project Genome without rewriting evidence.
-6. Enter **Dream Foundry** to inspect inherited, mutated, rejected and invented Project Rules.
-7. Compile a real `experience-pack.zip` containing canonical JSON, evidence, anti-copy constraints and adapters for Codex, Claude, Gemini, Cursor and Copilot.
-8. Open **Drift Lab** to distinguish the real-web product proof from a deterministic same-Collector-ID healing experiment.
+1. Scroll through a light parallax expedition where Akshar reads structure and Gati follows change.
+2. Watch the manga-style problem story resolve into a state/action/state evidence path and a branching Experience Genome.
+3. Enter the embedded **Guided Quest** without leaving the page.
+4. Switch from the controlled fixture to a real persisted Linear capture.
+5. Mark the real observation **Keep** and watch `R05` enter the multi-reference Project Genome without rewriting evidence.
+6. Compile a real `experience-pack.zip` containing canonical JSON, evidence, anti-copy constraints and adapters for Codex, Claude, Gemini, Cursor and Copilot.
+7. Open the full **Genome Lens** for deeper provenance inspection or **Drift Lab** for the deterministic same-Collector-ID healing proof.
 
 ![Genome Lens evidence workbench](public/readme/genome-lens.png)
 
@@ -94,7 +93,7 @@ Ground → Abstract → Judge → Synthesize → Verify → Compile
 ```
 
 - **Next.js 16 / React 19** on Vercel
-- **React Three Fiber / Three.js** for the scroll-linked archive world and Akshar/Gati familiars
+- **React Three Fiber / Three.js** plus layered CSS scenery for the scroll-linked landscape and distinct Akshar/Gati motion
 - **Zod** for the canonical intermediate representation and provenance constraints
 - **JSZip** for client-side portable pack compilation
 - **Bright Data Scraper Studio** for public-web grounding and self-healing proof
@@ -181,7 +180,7 @@ Secrets never enter client bundles. A provider capability check is required befo
 ## AI use disclosure
 
 - OpenAI Codex was used for implementation, visual QA, testing and repository maintenance.
-- OpenAI image generation produced the original ancient-future archive concept used as a landing-page memory plate; it does not copy a supplied site or copyrighted character.
+- OpenAI image generation produced the original light monsoon-landscape plate used behind the code-native parallax story; it does not copy a supplied site or copyrighted character.
 - ChatGPT was used as a product-thinking collaborator during scope correction and narrative development.
 - The committed synthesis artifact is a deterministic verified replay. Live model generation is kept behind the provider boundary so the public demo remains stable and does not expose keys.
 

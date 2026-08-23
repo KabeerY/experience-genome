@@ -1,65 +1,61 @@
 # Three-minute demo script
 
-Target: **2:45–2:55**. Record at 1440p or 1080p. Hide bookmarks, notifications, API keys and unrelated tabs.
+Target: **2:45–2:55**. Record at 1080p or 1440p. Hide bookmarks, notifications, keys and unrelated tabs.
 
-## 0:00–0:22 — the false reading
+## 0:00–0:20 — enter the world
 
 Start at `https://experience-genome.vercel.app`.
 
-> “A screenshot captures pixels. A normal scraper captures symbols and structure. But the web was still moving.”
+> “A screenshot captures pixels. A normal scraper captures symbols. But the web was still moving.”
 
-Scroll just far enough to show Akshar/Gati and the line:
+Briefly show the light landscape, Akshar and Gati, then click **Scroll into the story**.
+
+## 0:20–0:48 — the false reading
+
+Scroll through the manga panels.
+
+> “Akshar successfully reads text, links and structure. Gati notices the experience continuing behind him: what changed, after which action, and in what order?”
+
+Pause on:
 
 > “Then you have read it. You have not understood it.”
 
-## 0:22–0:40 — define the product
+## 0:48–1:13 — evidence and memory
 
-Use the hero CTA to enter Genome Lens.
+Scroll through the three physical state cards and the genome tree.
 
-> “Experience Compiler uses Bright Data to record ordered web states and the actions between them. The machine records what happened; the human tells it what mattered. We compile both into reusable design rules without cloning the reference.”
+> “Bright Data grounds ordered state/action/state evidence. Observation and human taste remain separate branches: the machine records what happened; the human tells it what mattered.”
 
-## 0:40–1:20 — prove the evidence chain
+Point out the explicit unresolved dimensions.
 
-Click **Replay verified capture**. Point out:
+## 1:13–2:04 — play the guided quest
 
-- the real collector suffix in the header;
-- three state cards and the scroll/wait actions;
-- the orthogonal `OBSERVED` and `PREFERRED` badges;
-- the evidence path `S01 → A01 → … → D02`.
+At **The Experience Workshop**, choose **Play the guided quest**.
 
-Click **Reject**, then **Keep**.
+1. Click **B / Linear landing page**.
+2. Show the real collector suffix and three sparse regions.
+3. Point out that timing, easing, pointer physics and audio remain unresolved.
+4. Click **Keep**.
+5. Show `R05 / Narrative depth markers` entering the Project Genome.
+6. Click **Compile Experience Pack** and show **Experience Pack downloaded**.
 
-> “Evidence never changes when taste changes. And unknowns stay unknown—lighting, pointer physics and audio are not silently invented.”
+> “Judging the rule never rewrites its evidence. Public judge views use verified replay and cost zero live Bright Data credits.”
 
-Click reference **B / Linear public landing page**. Point out that it is a separate real-web collector and intentionally sparse. Select claim `LC01`, then click **Keep**.
+## 2:04–2:27 — full Genome Lens
 
-> “This external run observed page-load, scroll and scroll across three regions. It did not capture timing or easing, so those stay unresolved. Only after I keep the sequencing principle does it enter synthesis.”
+Click **Open the complete Genome Lens**. Select Reference B, Keep, then **02 Synthesize**.
 
-## 1:20–1:52 — synthesize rather than copy
+> “The old decorative rings are gone. Each leaf is now a concrete inherited, mutated, rejected or invented rule. Click R05 and its provenance resolves back to the real capture.”
 
-Open **02 Synthesize**. Click `R05 Narrative depth markers`, then one rejected rule and the invented rule.
-
-> “Dream Foundry creates a Project Genome, not a fake generated production website. R05 now traces to the real Linear observation selected by the human. Every rule is inherited, mutated, rejected or invented, with source claims and an anti-copy constraint.”
-
-## 1:52–2:12 — compile the portable artifact
-
-Open **03 Compile**, show the file tree, click **Compile Experience Pack**.
-
-> “The output is vendor-neutral: canonical JSON, raw evidence, traces, the brief, anti-copy rules and adapters for Codex, Claude, Gemini, Cursor and Copilot.”
-
-Make sure the UI displays **Pack downloaded**.
-
-## 2:12–2:45 — Bright Data and same-ID resilience
+## 2:27–2:48 — same-ID healing
 
 Open **Drift Lab**.
 
-> “This reliability proof is deliberately separate from our real-web product demo. Baseline returned three ordered states. A public DOM mutation made the same collector return an empty array. Bright Data’s self-healing refactored that collector in place, and recovery was verified under the same `c_*`. The whole project used only seven of five thousand records; public judge views use zero.”
+> “The reliability proof is separate and controlled. A DOM mutation broke the original selector contract. Bright Data healed the development version in place, and the same `c_*` recovered the exact three-state contract.”
 
-Show the collector ID and baseline/broken/heal/recovery evidence rows. Do not open a screen containing the API token.
+Show the collector ID and verified ledger.
 
-## 2:45–2:55 — close
-
-Return to the product or README hero.
+## 2:48–2:55 — close
 
 > “Observe the experience. Supply the judgment. Compile what mattered. This is Experience Compiler.”
 
@@ -67,7 +63,8 @@ Return to the product or README hero.
 
 - Run once through the exact path before recording.
 - Keep browser zoom at 90–100%; do not zoom mid-recording.
-- Ensure the downloaded ZIP appears or the button says **Pack downloaded**.
+- Ensure **Experience Pack downloaded** appears.
 - Say “action-conditioned change,” not “universal causation.”
 - Say “controlled same-ID healing proof,” not “it heals every website.”
-- Keep the video under three minutes before upload.
+- Mention seven of 5,000 records used; public views trigger zero.
+- Keep the uploaded video under three minutes.

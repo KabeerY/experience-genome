@@ -10,11 +10,12 @@ Turn observed web experience plus human judgment into portable design rules for 
 
 ## Short description
 
-Most design tools stop at screenshots or DOM structure. Experience Compiler uses a custom Bright Data Scraper Studio collector to preserve ordered states, triggering actions and structured evidence. A human explicitly marks what they prefer or reject. The system compiles that evidence and judgment into an Experience Genome, synthesizes an original Project Genome, verifies provenance, and downloads a portable Experience Pack for Codex, Claude, Gemini, Cursor and Copilot.
+Most design tools stop at screenshots or DOM structure. Experience Compiler begins as a light parallax story that teaches the gap between reading and understanding, then transforms in place into a guided product. A custom Bright Data Scraper Studio collector preserves ordered states, triggering actions and structured evidence. A human explicitly marks what they prefer or reject. The system compiles that evidence and judgment into an Experience Genome, synthesizes an original Project Genome, verifies provenance, and downloads a portable Experience Pack for Codex, Claude, Gemini, Cursor and Copilot.
 
 ## What it does
 
 - Captures public interactive references as structured state/action/state traces, including a persisted real-web Linear run.
+- Presents the complete evidence-to-pack workflow as a one-page guided quest, with a separate custom-reference capture composer.
 - Separates observed, inferred, user-specified and unresolved claims.
 - Stores human taste independently as preferred, rejected, neutral or unreviewed.
 - Lets every Genome Rule be inspected back to evidence and forward to a Project Rule.
