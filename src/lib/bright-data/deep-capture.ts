@@ -26,6 +26,26 @@ export type RenderedJourney = {
 type EndpointCache = { endpoint: string; expiresAt: number };
 let endpointCache: EndpointCache | null = null;
 
+const sleep = (milliseconds: number) => new Promise((resolve) => setTimeout(resolve, milliseconds));
+
+async function connectToRenderedBrowser(endpoint: string) {
+  const retryDelays = [0, 1_500, 3_500];
+  let lastError: unknown;
+
+  for (const delay of retryDelays) {
+    if (delay) await sleep(delay);
+    try {
+      return await chromium.connectOverCDP(endpoint, { timeout: 12_000 });
+    } catch (error) {
+      lastError = error;
+      const message = error instanceof Error ? error.message : String(error);
+      if (!message.includes("browser_in_use")) throw error;
+    }
+  }
+
+  throw lastError;
+}
+
 async function brightDataJson(path: string, apiToken: string) {
   const response = await fetch(`https://api.brightdata.com${path}`, {
     headers: { Authorization: `Bearer ${apiToken}` },
@@ -114,7 +134,13 @@ async function collectRenderedMoment(page: Page, order: number, scrollProgress: 
       transformedElements,
     };
   });
-  const screenshot = await page.screenshot({ type: "jpeg", quality: 54, timeout: 8_000 });
+  const screenshot = await page.screenshot({
+    type: "jpeg",
+    quality: 54,
+    animations: "disabled",
+    caret: "hide",
+    timeout: 15_000,
+  });
 
   return {
     order,
@@ -139,7 +165,7 @@ export async function captureRenderedJourney(url: URL): Promise<RenderedJourney>
   let browser: Browser | null = null;
 
   try {
-    browser = await chromium.connectOverCDP(endpoint, { timeout: 12_000 });
+    browser = await connectToRenderedBrowser(endpoint);
     const context = browser.contexts()[0];
     const page = context.pages()[0] ?? (await context.newPage());
     await page.setViewportSize({ width: 1280, height: 760 });
