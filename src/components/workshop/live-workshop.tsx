@@ -79,6 +79,12 @@ function stageLabel(order: number, total: number) {
   return "Next observed moment";
 }
 
+function captureEvidenceLabel(capture: LiveCapture) {
+  const renderedFrames = capture.moments.filter((moment) => moment.visual).length;
+  if (renderedFrames === 0) return "Structured trace";
+  return `Structured trace + ${renderedFrames} rendered frame${renderedFrames === 1 ? "" : "s"}`;
+}
+
 function modelLabel(model?: string, provider?: string) {
   if (!model) return "Verified model agent";
   const id = model.split("/").at(-1) ?? model;
@@ -111,6 +117,7 @@ export function LiveWorkshop() {
   const [activeKey, setActiveKey] = useState<string | null>(null);
   const [captureStatus, setCaptureStatus] = useState<CaptureStatus>("idle");
   const [capturePhase, setCapturePhase] = useState(0);
+  const [captureElapsedSeconds, setCaptureElapsedSeconds] = useState(0);
   const [captureError, setCaptureError] = useState<string | null>(null);
   const [lastUrl, setLastUrl] = useState("");
   const [draftRule, setDraftRule] = useState("");
@@ -139,8 +146,12 @@ export function LiveWorkshop() {
   useEffect(() => {
     if (captureStatus !== "capturing") return;
     const interval = window.setInterval(() => {
-      setCapturePhase((current) => Math.min(current + 1, CAPTURE_PHASES.length - 1));
-    }, 1_150);
+      setCaptureElapsedSeconds((current) => {
+        const next = current + 1;
+        setCapturePhase(next < 8 ? 0 : next < 24 ? 1 : next < 44 ? 2 : 3);
+        return next;
+      });
+    }, 1_000);
     return () => window.clearInterval(interval);
   }, [captureStatus]);
 
@@ -271,6 +282,7 @@ export function LiveWorkshop() {
     const intent = String(data.get("intent") ?? "").trim();
     setLastUrl(url);
     setCapturePhase(0);
+    setCaptureElapsedSeconds(0);
     setCaptureStatus("capturing");
     setCaptureError(null);
     setProject(null);
@@ -280,7 +292,7 @@ export function LiveWorkshop() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url, intent: intent || undefined }),
-        signal: AbortSignal.timeout(115_000),
+        signal: AbortSignal.timeout(225_000),
       });
       const payload = await responsePayload(
         response,
@@ -512,6 +524,7 @@ export function LiveWorkshop() {
               <small>LIVE BROWSER JOURNEY</small>
               <strong>{CAPTURE_PHASES[capturePhase].title}</strong>
               <p>{CAPTURE_PHASES[capturePhase].detail}</p>
+              <em>{captureElapsedSeconds}s elapsed · complex 3D pages can take up to two minutes</em>
             </div>
             <div className={styles.phaseRail}>
               {CAPTURE_PHASES.map((phase, index) => (
@@ -574,12 +587,7 @@ export function LiveWorkshop() {
                   <CheckCircle2 size={19} />
                   <span>
                     <small>CAPTURE COMPLETED</small>
-                    <strong>
-                      {activeReference.capture.verification.evidenceLayers.includes("rendered-browser")
-                        ? "Structured trace + rendered frames"
-                        : "Structured trace"}
-                      {` · ${(activeReference.capture.durationMs / 1000).toFixed(1)}s`}
-                    </strong>
+                    <strong>{captureEvidenceLabel(activeReference.capture)}{` · ${(activeReference.capture.durationMs / 1000).toFixed(1)}s`}</strong>
                   </span>
                 </div>
               </header>

@@ -118,12 +118,13 @@ async function captureViewport(cdp: CDPSession) {
   const payload = await Promise.race([
     cdp.send("Page.captureScreenshot", {
       format: "jpeg",
-      quality: 54,
+      quality: 38,
       fromSurface: true,
       captureBeyondViewport: false,
+      optimizeForSpeed: true,
     }),
     new Promise<never>((_, reject) =>
-      setTimeout(() => reject(new Error("Direct viewport capture timed out.")), 10_000),
+      setTimeout(() => reject(new Error("Direct viewport capture timed out.")), 20_000),
     ),
   ]);
   return screenshotSchema.parse(payload).data;
@@ -199,7 +200,7 @@ export async function captureRenderedJourney(url: URL): Promise<RenderedJourney>
     browser = await connectToRenderedBrowser(endpoint);
     const context = browser.contexts()[0];
     const page = context.pages()[0] ?? (await context.newPage());
-    await page.setViewportSize({ width: 1280, height: 760 });
+    await page.setViewportSize({ width: 960, height: 600 });
 
     try {
       await page.goto(url.toString(), { waitUntil: "domcontentloaded", timeout: 18_000 });
@@ -218,15 +219,21 @@ export async function captureRenderedJourney(url: URL): Promise<RenderedJourney>
 
     const positions = [0, 0.5, 0.92];
     const moments: RenderedMoment[] = [];
+    let lastFrameError: unknown;
     for (const [index, position] of positions.entries()) {
       await page.evaluate((progress) => {
         const maxScroll = Math.max(0, document.documentElement.scrollHeight - innerHeight);
         scrollTo({ top: maxScroll * progress, behavior: "instant" });
       }, position);
       await page.waitForTimeout(index === 0 ? 450 : 1_050);
-      moments.push(await collectRenderedMoment(page, cdp, index + 1, position));
+      try {
+        moments.push(await collectRenderedMoment(page, cdp, index + 1, position));
+      } catch (error) {
+        lastFrameError = error;
+      }
     }
 
+    if (moments.length === 0) throw lastFrameError ?? new Error("No rendered frames were returned.");
     return { moments };
   } finally {
     await cdp?.detach().catch(() => undefined);
