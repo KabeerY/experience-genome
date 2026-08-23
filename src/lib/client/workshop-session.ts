@@ -13,7 +13,7 @@ const workshopReferenceSchema = z.object({
   interpretationError: z.string().optional(),
 });
 
-export const workshopSessionSchema = z.object({
+const workshopSessionSchema = z.object({
   version: z.literal("workshop-session@1"),
   references: z.array(workshopReferenceSchema).max(8),
   activeKey: z.string().nullable(),
@@ -24,7 +24,7 @@ export const workshopSessionSchema = z.object({
   savedAt: z.string().datetime(),
 });
 
-export type WorkshopSession = z.infer<typeof workshopSessionSchema>;
+type WorkshopSession = z.infer<typeof workshopSessionSchema>;
 
 const DATABASE_NAME = "experience-compiler";
 const STORE_NAME = "workshop-sessions";

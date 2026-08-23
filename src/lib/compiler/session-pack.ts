@@ -1,17 +1,12 @@
 import JSZip from "jszip";
 import { z } from "zod";
 
-import { liveCaptureSchema } from "@/lib/capture/public-contract";
+import type { LiveCapture } from "@/lib/capture/public-contract";
 
 export const humanDecisionSchema = z.object({
   judgment: z.enum(["preferred", "rejected"]),
   rule: z.string().trim().min(1),
   note: z.string().trim().max(800).optional(),
-});
-
-export const judgedReferenceSchema = z.object({
-  capture: liveCaptureSchema,
-  decision: humanDecisionSchema,
 });
 
 export const portableProjectGenomeSchema = z.object({
@@ -59,7 +54,7 @@ export const portableProjectGenomeSchema = z.object({
 });
 
 export type HumanDecision = z.infer<typeof humanDecisionSchema>;
-export type JudgedReference = z.infer<typeof judgedReferenceSchema>;
+type JudgedReference = { capture: LiveCapture; decision: HumanDecision };
 export type PortableProjectGenome = z.infer<typeof portableProjectGenomeSchema>;
 type PortableRule = PortableProjectGenome["rules"][number];
 type PackFile = { path: string; content: string; base64?: boolean };

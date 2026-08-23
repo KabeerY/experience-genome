@@ -7,7 +7,7 @@ const statusSchema = z.object({ customer: z.string().min(1) });
 const passwordSchema = z.object({ passwords: z.array(z.string().min(1)).min(1) });
 const screenshotSchema = z.object({ data: z.string().min(20) });
 
-export type RenderedMoment = {
+type RenderedMoment = {
   order: number;
   imageDataUrl: string;
   scrollY: number;

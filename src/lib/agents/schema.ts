@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const evidenceClaimSchema = z.object({
+const evidenceClaimSchema = z.object({
   title: z.string().trim().min(3).max(90),
   dimension: z.enum([
     "journey",
@@ -41,10 +41,6 @@ export const evidenceInterpretationSchema = evidenceInterpretationDraftSchema.ex
     status: z.literal("passed"),
     checks: z.array(z.string().min(1)).min(1),
   }),
-});
-
-export const interpretRequestSchema = z.object({
-  capture: z.unknown(),
 });
 
 export type EvidenceInterpretation = z.infer<typeof evidenceInterpretationSchema>;

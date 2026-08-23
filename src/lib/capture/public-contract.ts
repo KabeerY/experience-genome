@@ -5,7 +5,7 @@ export const captureRequestSchema = z.object({
   intent: z.string().trim().max(500).optional(),
 });
 
-export const capturedMomentSchema = z.object({
+const capturedMomentSchema = z.object({
   order: z.number().int().positive(),
   stage: z.string().min(1),
   actionBefore: z.string().min(1),
@@ -30,14 +30,14 @@ export const capturedMomentSchema = z.object({
     .optional(),
 });
 
-export const capturedTransitionSchema = z.object({
+const capturedTransitionSchema = z.object({
   from: z.number().int().positive(),
   to: z.number().int().positive(),
   action: z.string().min(1),
   observedChange: z.string().min(1),
 });
 
-export const captureCoverageSchema = z.object({
+const captureCoverageSchema = z.object({
   dimension: z.string().min(1),
   status: z.enum(["grounded", "partial", "unresolved"]),
   reason: z.string().min(1),
@@ -86,7 +86,4 @@ export const captureErrorSchema = z.object({
   }),
 });
 
-export type CaptureRequest = z.infer<typeof captureRequestSchema>;
-export type CapturedMoment = z.infer<typeof capturedMomentSchema>;
 export type LiveCapture = z.infer<typeof liveCaptureSchema>;
-export type CaptureError = z.infer<typeof captureErrorSchema>;
