@@ -1,0 +1,36 @@
+{
+  "capturedAt": "2026-08-23T22:28:12.769Z",
+  "source": "https://razorpay.com/foundation-model/",
+  "durationMs": 85661,
+  "capture": {
+    "provider": "Bright Data",
+    "mode": "live",
+    "recordCount": 1,
+    "evidenceLayers": [
+      "structured-journey",
+      "rendered-browser"
+    ],
+    "moments": [
+      { "order": 1, "stage": "Arrival", "scrollProgress": 0, "runningAnimations": 0, "fixedElements": 0 },
+      { "order": 2, "stage": "Quarter scroll", "scrollProgress": 0.25, "runningAnimations": 2, "fixedElements": 6 },
+      { "order": 3, "stage": "Mid scroll", "scrollProgress": 0.5, "runningAnimations": 0, "fixedElements": 7 },
+      { "order": 4, "stage": "Late scroll", "scrollProgress": 0.75, "runningAnimations": 0, "fixedElements": 7 },
+      { "order": 5, "stage": "Deep scroll", "scrollProgress": 0.9199417758369723, "runningAnimations": 0, "fixedElements": 7 }
+    ]
+  },
+  "interpretation": {
+    "provider": "fireworks",
+    "model": "accounts/fireworks/models/kimi-k2p6",
+    "inputMode": "rendered-multimodal",
+    "verificationStatus": "passed",
+    "claimCount": 6,
+    "claimBasisCounts": {
+      "inferred": 6
+    }
+  },
+  "notes": [
+    "The request was made against the canonical production deployment.",
+    "The stored receipt excludes screenshot data URLs, credentials, and internal request identifiers.",
+    "Five sampled moments establish distributed state changes; continuous easing, pointer branches, audio, and authorial intent remain outside the evidence contract."
+  ]
+}

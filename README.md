@@ -52,7 +52,7 @@ If the rendered layer is unavailable, the interface says so and the model receiv
 
 The separate [Drift Lab](https://experience-genome.vercel.app/lab/drift) is a controlled fixture for the repeatable break → same-collector heal → recover proof. It is deliberately separate from arbitrary live web capture.
 
-Historical Bright Data artifacts, including failed attempts and the controlled recovery ledger, remain in [`evidence/brightdata`](evidence/brightdata).
+Historical Bright Data artifacts, including failed attempts, the controlled recovery ledger, and a redacted five-moment production verification receipt, remain in [`evidence/brightdata`](evidence/brightdata).
 
 ## Bounded agent architecture
 
