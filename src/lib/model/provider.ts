@@ -16,6 +16,8 @@ type StructuredRequest<TSchema extends z.ZodType> = {
   schemaName: string;
   system: string;
   prompt: string;
+  images?: string[];
+  validate?: (value: z.infer<TSchema>) => string[];
 };
 
 function readConfig(): ModelConfig {
@@ -63,11 +65,24 @@ async function requestCompletion(
         { role: "system", content: request.system },
         {
           role: "user",
-          content: repairContext
-            ? `${request.prompt}\n\nThe previous response failed validation. Return a corrected JSON object only. Validation context:\n${repairContext}`
-            : request.prompt,
+          content: request.images?.length
+            ? [
+                {
+                  type: "text",
+                  text: repairContext
+                    ? `${request.prompt}\n\nThe previous response failed validation. Return a corrected JSON object only. Validation context:\n${repairContext}`
+                    : request.prompt,
+                },
+                ...request.images.map((url) => ({ type: "image_url", image_url: { url } })),
+              ]
+            : repairContext
+              ? `${request.prompt}\n\nThe previous response failed validation. Return a corrected JSON object only. Validation context:\n${repairContext}`
+              : request.prompt,
         },
       ],
+      max_tokens: 2_800,
+      reasoning: { effort: "medium", exclude: true },
+      provider: { require_parameters: true },
       response_format: {
         type: "json_schema",
         json_schema: {
@@ -78,6 +93,7 @@ async function requestCompletion(
       },
     }),
     cache: "no-store",
+    signal: AbortSignal.timeout(75_000),
   });
 
   if (!response.ok) {
@@ -93,12 +109,19 @@ export async function generateStructured<TSchema extends z.ZodType>(
   const config = readConfig();
   const firstContent = await requestCompletion(config, request);
 
+  const parseAndValidate = (content: string) => {
+    const value = request.schema.parse(JSON.parse(content));
+    const issues = request.validate?.(value) ?? [];
+    if (issues.length) throw new Error(issues.join("\n"));
+    return value;
+  };
+
   try {
-    return request.schema.parse(JSON.parse(firstContent));
+    return parseAndValidate(firstContent);
   } catch (firstError) {
     const context = firstError instanceof Error ? firstError.message : "Invalid JSON response.";
     const repairedContent = await requestCompletion(config, request, context);
-    return request.schema.parse(JSON.parse(repairedContent));
+    return parseAndValidate(repairedContent);
   }
 }
 

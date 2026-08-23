@@ -4,6 +4,7 @@ import {
   AlertTriangle,
   ArrowDown,
   ArrowRight,
+  BrainCircuit,
   Check,
   CheckCircle2,
   ChevronRight,
@@ -25,6 +26,10 @@ import {
 import { type FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import {
+  evidenceInterpretationSchema,
+  type EvidenceInterpretation,
+} from "@/lib/agents/schema";
+import {
   captureErrorSchema,
   liveCaptureSchema,
   type LiveCapture,
@@ -33,6 +38,7 @@ import {
   buildSessionPackFiles,
   compileSessionGenome,
   downloadSessionPack,
+  portableProjectGenomeSchema,
   type HumanDecision,
   type PortableProjectGenome,
 } from "@/lib/compiler/session-pack";
@@ -43,6 +49,9 @@ type SessionReference = {
   key: string;
   capture: LiveCapture;
   decision?: HumanDecision;
+  interpretation?: EvidenceInterpretation;
+  interpretationStatus: "thinking" | "ready" | "error";
+  interpretationError?: string;
 };
 
 type CaptureStatus = "idle" | "capturing" | "ready" | "error";
@@ -83,9 +92,13 @@ export function LiveWorkshop() {
   );
   const [desiredAffect, setDesiredAffect] = useState("wonder, clarity, anticipation");
   const [project, setProject] = useState<PortableProjectGenome | null>(null);
+  const [compileStatus, setCompileStatus] = useState<"idle" | "thinking" | "error">("idle");
+  const [compileError, setCompileError] = useState<string | null>(null);
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied">("idle");
 
   const activeReference = references.find((reference) => reference.key === activeKey) ?? null;
+  const activeInterpretation = activeReference?.interpretation ?? null;
+  const activeFinding = activeReference?.interpretation ?? activeReference?.capture.finding ?? null;
   const decidedReferences = useMemo(
     () => references.filter((reference): reference is SessionReference & { decision: HumanDecision } => Boolean(reference.decision)),
     [references],
@@ -98,6 +111,60 @@ export function LiveWorkshop() {
     }, 1_150);
     return () => window.clearInterval(interval);
   }, [captureStatus]);
+
+  async function requestInterpretation(key: string, capture: LiveCapture) {
+    setReferences((current) =>
+      current.map((reference) =>
+        reference.key === key
+          ? { ...reference, interpretationStatus: "thinking", interpretationError: undefined }
+          : reference,
+      ),
+    );
+
+    try {
+      const response = await fetch("/api/interpret", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ capture }),
+        signal: AbortSignal.timeout(90_000),
+      });
+      const payload: unknown = await response.json();
+      if (!response.ok) {
+        const message =
+          payload && typeof payload === "object" && "error" in payload && typeof payload.error === "string"
+            ? payload.error
+            : "The Evidence Interpreter could not complete this run.";
+        throw new Error(message);
+      }
+
+      const interpretation = evidenceInterpretationSchema.parse(payload);
+      setReferences((current) =>
+        current.map((reference) =>
+          reference.key === key
+            ? { ...reference, interpretation, interpretationStatus: "ready", interpretationError: undefined }
+            : reference,
+        ),
+      );
+      setDraftRule((current) =>
+        current === capture.finding.candidateRule ? interpretation.candidateRule : current,
+      );
+    } catch (error) {
+      setReferences((current) =>
+        current.map((reference) =>
+          reference.key === key
+            ? {
+                ...reference,
+                interpretationStatus: "error",
+                interpretationError:
+                  error instanceof Error
+                    ? error.message
+                    : "The Evidence Interpreter could not complete this run.",
+              }
+            : reference,
+        ),
+      );
+    }
+  }
 
   async function startCapture(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -132,13 +199,14 @@ export function LiveWorkshop() {
 
       const capture = liveCaptureSchema.parse(payload);
       const key = `${capture.source.url}:${capture.capturedAt}`;
-      setReferences((current) => [...current, { key, capture }]);
+      setReferences((current) => [...current, { key, capture, interpretationStatus: "thinking" }]);
       setActiveKey(key);
       setDraftRule(capture.finding.candidateRule);
       setDraftNote("");
       setDraftJudgment(null);
       setCaptureStatus("ready");
       window.setTimeout(() => evidenceRegion.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 120);
+      void requestInterpretation(key, capture);
     } catch (error) {
       const message =
         error instanceof DOMException && error.name === "TimeoutError"
@@ -171,15 +239,55 @@ export function LiveWorkshop() {
     setDraftJudgment(reference.decision?.judgment ?? null);
   }
 
-  function compileProject() {
+  async function compileProject() {
     if (!decidedReferences.length) return;
-    const nextProject = compileSessionGenome({
+    setCompileStatus("thinking");
+    setCompileError(null);
+    setProject(null);
+
+    try {
+      const response = await fetch("/api/compile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: projectTitle.trim() || "Untitled experience",
+          brief: projectBrief.trim() || "Create an original interactive experience.",
+          desiredAffect: desiredAffect.split(",").map((item) => item.trim()).filter(Boolean),
+          references: decidedReferences.map(({ capture, decision, interpretation }) => ({
+            capture,
+            decision,
+            interpretation,
+          })),
+        }),
+        signal: AbortSignal.timeout(90_000),
+      });
+      const payload: unknown = await response.json();
+      if (!response.ok) {
+        const message =
+          payload && typeof payload === "object" && "error" in payload && typeof payload.error === "string"
+            ? payload.error
+            : "The Genome Synthesizer could not complete this run.";
+        throw new Error(message);
+      }
+      setProject(portableProjectGenomeSchema.parse(payload));
+      setCompileStatus("idle");
+      window.setTimeout(() => document.getElementById("compiled-output")?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
+    } catch (error) {
+      setCompileStatus("error");
+      setCompileError(error instanceof Error ? error.message : "The Genome Synthesizer could not complete this run.");
+    }
+  }
+
+  function compileProjectLocally() {
+    if (!decidedReferences.length) return;
+    setProject(compileSessionGenome({
       title: projectTitle,
       brief: projectBrief,
       desiredAffect: desiredAffect.split(","),
       references: decidedReferences.map(({ capture, decision }) => ({ capture, decision })),
-    });
-    setProject(nextProject);
+    }));
+    setCompileStatus("idle");
+    setCompileError(null);
     window.setTimeout(() => document.getElementById("compiled-output")?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
   }
 
@@ -224,7 +332,14 @@ export function LiveWorkshop() {
           ["3", "Judge"],
           ["4", "Compile"],
         ].map(([number, label], index) => {
-          const completed = index === 0 ? references.length > 0 : index === 1 ? references.length > 0 : index === 2 ? decidedReferences.length > 0 : Boolean(project);
+          const completed =
+            index === 0
+              ? references.length > 0
+              : index === 1
+                ? references.some((reference) => reference.interpretationStatus === "ready")
+                : index === 2
+                  ? decidedReferences.length > 0
+                  : Boolean(project);
           return (
             <div data-complete={completed} key={label}>
               <span>{completed ? <Check size={13} /> : number}</span><strong>{label}</strong>
@@ -402,23 +517,82 @@ export function LiveWorkshop() {
                 </div>
               </section>
 
-              <section className={styles.truthGrid}>
+              <section className={styles.agentStatus} data-status={activeReference.interpretationStatus}>
+                <span className={styles.agentGlyph}>
+                  {activeReference.interpretationStatus === "thinking" ? (
+                    <LoaderCircle className={styles.spin} size={20} />
+                  ) : activeReference.interpretationStatus === "ready" ? (
+                    <BrainCircuit size={20} />
+                  ) : (
+                    <AlertTriangle size={20} />
+                  )}
+                </span>
+                <div>
+                  <small>EVIDENCE INTERPRETER</small>
+                  {activeReference.interpretationStatus === "thinking" ? (
+                    <><strong>Reasoning across the trace and rendered frames…</strong><p>The live evidence is already safe; this agent is separating observation, inference, and unknowns.</p></>
+                  ) : activeReference.interpretationStatus === "ready" ? (
+                    <>
+                      <strong>Interpretation complete · provenance checks passed</strong>
+                      <p>{activeInterpretation?.agent.model} produced the reading below; deterministic checks verified every observed citation.</p>
+                    </>
+                  ) : (
+                    <><strong>Agent interpretation unavailable</strong><p>{activeReference.interpretationError} The grounded first-pass reading remains below.</p></>
+                  )}
+                </div>
+                {activeReference.interpretationStatus === "error" && (
+                  <button onClick={() => void requestInterpretation(activeReference.key, activeReference.capture)} type="button">
+                    <RotateCcw size={14} /> Retry interpreter
+                  </button>
+                )}
+              </section>
+
+              {activeFinding && <section className={styles.truthGrid}>
                 <article>
                   <span className={styles.observedLabel}><Eye size={14} /> OBSERVED</span>
-                  <h4>{activeReference.capture.finding.observation}</h4>
+                  <h4>{activeFinding.observation}</h4>
                   <p>Grounded in the ordered moments above.</p>
                 </article>
                 <article>
                   <span className={styles.inferredLabel}><WandSparkles size={14} /> INFERRED</span>
-                  <h4>{activeReference.capture.finding.inference}</h4>
+                  <h4>{activeFinding.inference}</h4>
                   <p>A bounded interpretation—not a direct measurement.</p>
                 </article>
                 <article>
                   <span className={styles.unknownLabel}><AlertTriangle size={14} /> STILL UNKNOWN</span>
-                  <h4>{activeReference.capture.finding.caveat}</h4>
+                  <h4>{activeFinding.caveat}</h4>
                   <p>Unknowns remain visible instead of being filled with confident prose.</p>
                 </article>
-              </section>
+              </section>}
+
+              {activeInterpretation && (
+                <section className={styles.claimSection}>
+                  <header>
+                    <div><small>AGENT REASONING MAP</small><h4>Every claim keeps its basis.</h4></div>
+                    <span><ShieldCheck size={15} /> VERIFIED</span>
+                  </header>
+                  <div className={styles.claimGrid}>
+                    {activeInterpretation.claims.map((claim) => (
+                      <article data-basis={claim.epistemicBasis} key={`${claim.title}:${claim.statement}`}>
+                        <div>
+                          <span>{claim.epistemicBasis}</span>
+                          <small>{claim.dimension} · {claim.confidence} confidence</small>
+                        </div>
+                        <h5>{claim.title}</h5>
+                        <p>{claim.statement}</p>
+                        <footer>
+                          {claim.evidenceMoments.length
+                            ? `Evidence: ${claim.evidenceMoments
+                                .map((order) => activeReference.capture.moments.find((moment) => moment.order === order)?.stage)
+                                .filter(Boolean)
+                                .join(" + ")}`
+                            : "No direct evidence claimed"}
+                        </footer>
+                      </article>
+                    ))}
+                  </div>
+                </section>
+              )}
 
               <section className={styles.judgmentSection}>
                 <div className={styles.judgmentIntro}>
@@ -484,10 +658,19 @@ export function LiveWorkshop() {
             <label><span>PROJECT NAME</span><input onChange={(event) => setProjectTitle(event.target.value)} value={projectTitle} /></label>
             <label><span>WHAT ARE YOU BUILDING?</span><textarea onChange={(event) => setProjectBrief(event.target.value)} rows={4} value={projectBrief} /></label>
             <label><span>DESIRED FEELING <i>comma separated</i></span><input onChange={(event) => setDesiredAffect(event.target.value)} value={desiredAffect} /></label>
-            <button className={styles.compileButton} onClick={compileProject} type="button">
-              <WandSparkles size={19} /> Compile Project Genome <ArrowDown size={16} />
+            <button className={styles.compileButton} disabled={compileStatus === "thinking"} onClick={() => void compileProject()} type="button">
+              {compileStatus === "thinking" ? <LoaderCircle className={styles.spin} size={19} /> : <BrainCircuit size={19} />}
+              {compileStatus === "thinking" ? "Genome Synthesizer is reasoning…" : "Synthesize Project Genome"}
+              {compileStatus !== "thinking" && <ArrowDown size={16} />}
             </button>
-            <p><ShieldCheck size={13} /> A deterministic verifier keeps evidence, inference, judgment, and unknowns separate in the output.</p>
+            <p><ShieldCheck size={13} /> The synthesis agent proposes rules; a deterministic verifier enforces provenance, judgment lanes, unknowns, and anti-copy constraints.</p>
+            {compileStatus === "error" && (
+              <div className={styles.compileFailure} role="alert">
+                <AlertTriangle size={18} />
+                <span><strong>Agent synthesis did not complete.</strong><small>{compileError}</small></span>
+                <button onClick={compileProjectLocally} type="button">Use local compiler</button>
+              </div>
+            )}
           </div>
         </section>
       )}
@@ -495,7 +678,12 @@ export function LiveWorkshop() {
       {project && (
         <section className={styles.outputSection} id="compiled-output">
           <header>
-            <div><span>PROJECT GENOME COMPILED</span><h3>{project.title}</h3><p>{project.brief}</p></div>
+            <div>
+              <span>
+                PROJECT GENOME COMPILED · {project.compiler.mode === "agent" ? `${project.compiler.model} + PROVENANCE VERIFIER` : "LOCAL COMPILER + PROVENANCE VERIFIER"}
+              </span>
+              <h3>{project.title}</h3><p>{project.brief}</p>
+            </div>
             <div className={styles.outputActions}>
               <button onClick={copyAgentContext} type="button"><Clipboard size={16} /> {copyStatus === "copied" ? "Copied" : "Copy agent context"}</button>
               <button onClick={() => downloadSessionPack(project, decidedReferences.map(({ capture, decision }) => ({ capture, decision })))} type="button">
@@ -510,6 +698,7 @@ export function LiveWorkshop() {
                   <span>{rule.transformation}</span>
                   <h4>{rule.title}</h4>
                   <p>{rule.rule}</p>
+                  <p className={styles.ruleRationale}><strong>Why:</strong> {rule.rationale}</p>
                   <footer>{rule.source ? `From ${rule.source}, transformed for this project` : "Invented for this project"}</footer>
                 </article>
               ))}

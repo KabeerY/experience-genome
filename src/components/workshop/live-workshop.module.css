@@ -261,6 +261,17 @@
 .transitionArrow { display: grid; width: 72px; flex: 0 0 72px; place-items: center; gap: 7px; color: #e47a2e; text-align: center; }
 .transitionArrow span { max-width: 62px; color: #8b6e53; font: 750 7px/1.3 var(--font-geist-mono), monospace; text-transform: uppercase; }
 
+.agentStatus { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 16px; padding: 21px clamp(20px, 4vw, 55px); color: #214c4c; border-top: 1px solid rgba(23,59,60,.11); background: #e8f0e6; }
+.agentStatus[data-status="thinking"] { color: #24589c; background: #e9eff8; }
+.agentStatus[data-status="error"] { color: #8c462e; background: #fff0dc; }
+.agentGlyph { display: grid; width: 45px; height: 45px; place-items: center; border-radius: 50%; color: white; background: currentColor; }
+.agentGlyph svg { color: white; }
+.agentStatus > div { display: grid; gap: 5px; }
+.agentStatus small { font: 800 8px/1 var(--font-geist-mono), monospace; letter-spacing: .1em; }
+.agentStatus strong { font: 590 19px/1.15 var(--font-story-serif), Georgia, serif; }
+.agentStatus p { margin: 0; color: #657773; font-size: 10px; line-height: 1.45; }
+.agentStatus button { display: inline-flex; align-items: center; gap: 6px; padding: 10px 13px; border-radius: 999px; color: white; background: #944c31; font-size: 9px; font-weight: 760; }
+
 .truthGrid { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid rgba(23,59,60,.11); border-bottom: 1px solid rgba(23,59,60,.11); }
 .truthGrid article { min-height: 245px; padding: clamp(24px, 3vw, 40px); border-right: 1px solid rgba(23,59,60,.11); }
 .truthGrid article:last-child { border-right: 0; background: #fff2dc; }
@@ -270,6 +281,23 @@
 .unknownLabel { color: #a2522e; background: #f7d7ba; }
 .truthGrid h4 { margin: 22px 0 12px; font: 560 clamp(20px, 2vw, 28px)/1.15 var(--font-story-serif), Georgia, serif; }
 .truthGrid p { margin: 0; color: #6a7b76; font-size: 11px; line-height: 1.5; }
+
+.claimSection { padding: clamp(28px, 4vw, 50px); border-bottom: 1px solid rgba(23,59,60,.11); background: #f4f0e5; }
+.claimSection > header { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 22px; }
+.claimSection header small { color: #225fb3; font: 800 8px/1 var(--font-geist-mono), monospace; letter-spacing: .1em; }
+.claimSection header h4 { margin: 8px 0 0; font: 570 clamp(26px, 3vw, 38px)/1 var(--font-story-serif), Georgia, serif; letter-spacing: -.03em; }
+.claimSection header > span { display: inline-flex; align-items: center; gap: 6px; padding: 8px 10px; border-radius: 999px; color: #3f7751; background: #dbead9; font: 800 8px/1 var(--font-geist-mono), monospace; letter-spacing: .07em; }
+.claimGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.claimGrid article { padding: 21px; border: 1px solid rgba(23,59,60,.12); border-radius: 15px; background: #fffdf6; }
+.claimGrid article[data-basis="unresolved"] { background: #fff4e3; }
+.claimGrid article > div { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.claimGrid article > div > span { padding: 6px 8px; border-radius: 999px; color: #225fb3; background: #e0eafb; font: 800 7px/1 var(--font-geist-mono), monospace; letter-spacing: .07em; text-transform: uppercase; }
+.claimGrid article[data-basis="inferred"] > div > span { color: #76551d; background: #f2e6ba; }
+.claimGrid article[data-basis="unresolved"] > div > span { color: #9c4b2c; background: #f5d9be; }
+.claimGrid article > div > small { color: #83908b; font: 700 7px/1 var(--font-geist-mono), monospace; text-transform: uppercase; }
+.claimGrid h5 { margin: 17px 0 8px; font: 580 22px/1.08 var(--font-story-serif), Georgia, serif; }
+.claimGrid p { margin: 0; color: #526b66; font-size: 11px; line-height: 1.52; }
+.claimGrid footer { margin-top: 15px; color: #73847e; font: 700 7px/1.35 var(--font-geist-mono), monospace; text-transform: uppercase; }
 
 .judgmentSection { display: grid; grid-template-columns: .72fr 1.28fr; }
 .judgmentIntro { padding: clamp(35px, 5vw, 65px); color: white; background: #173b3c; }
@@ -325,7 +353,13 @@
 .compilerForm input { height: 49px; padding: 0 13px; }
 .compilerForm textarea { padding: 13px; }
 .compileButton { display: inline-flex; min-height: 54px; align-items: center; justify-content: center; gap: 10px; border-radius: 13px; color: white; background: #173b3c; font-size: 13px; font-weight: 760; box-shadow: 0 15px 35px rgba(23,59,60,.18); }
+.compileButton:disabled { cursor: wait; opacity: .78; }
 .compilerForm > p { display: flex; align-items: flex-start; justify-content: center; gap: 6px; margin: 0; color: #6d7e78; font-size: 9px; line-height: 1.45; text-align: center; }
+.compileFailure { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; padding: 13px; border: 1px solid rgba(157,72,42,.2); border-radius: 12px; color: #934528; background: #fff0dc; }
+.compileFailure > span { display: grid; gap: 4px; }
+.compileFailure strong { font-size: 10px; }
+.compileFailure small { color: #7f6257; font-size: 8px; line-height: 1.4; }
+.compileFailure button { padding: 8px 10px; border-radius: 999px; color: white; background: #944c31; font-size: 8px; font-weight: 760; }
 
 .outputSection { width: min(1400px, 100%); margin: 65px auto 0; scroll-margin-top: 25px; overflow: hidden; border: 1px solid rgba(23,59,60,.13); border-radius: 30px; background: #fffdf6; box-shadow: 0 40px 100px rgba(40,68,56,.14); }
 .outputSection > header { display: flex; align-items: center; justify-content: space-between; gap: 30px; padding: clamp(30px, 5vw, 60px); color: white; background: #173b3c; }
@@ -343,6 +377,7 @@
 .ruleStack article[data-transformation="invented"] > span { color: #7c5617; background: #f1e2b6; }
 .ruleStack h4 { margin: 14px 0 7px; font: 570 25px/1.05 var(--font-story-serif), Georgia, serif; }
 .ruleStack p { margin: 0; color: #526b66; font-size: 13px; line-height: 1.5; }
+.ruleStack .ruleRationale { margin-top: 11px; padding-top: 11px; border-top: 1px solid rgba(23,59,60,.1); color: #71817c; font-size: 10px; }
 .ruleStack footer { margin-top: 13px; color: #82908b; font: 700 8px/1.4 var(--font-geist-mono), monospace; text-transform: uppercase; }
 .packPreview { position: relative; overflow: hidden; padding: clamp(35px, 5vw, 65px); color: white; background: #225fb3; }
 .packPreview::after { position: absolute; right: -100px; bottom: -100px; width: 280px; height: 280px; border: 1px solid rgba(255,255,255,.15); border-radius: 50%; content: ""; }
@@ -395,6 +430,8 @@
   .captureFailure { grid-template-columns: auto 1fr; gap: 14px; padding: 18px; }
   .phaseRail,
   .captureFailure button { grid-column: 1 / -1; }
+  .agentStatus { grid-template-columns: auto 1fr; }
+  .agentStatus button { grid-column: 1 / -1; justify-content: center; }
   .evidenceWorkspace { margin-top: 35px; border-radius: 20px; }
   .evidenceHeader { align-items: flex-start; flex-direction: column; }
   .captureReceipt { width: 100%; }
@@ -402,6 +439,7 @@
   .momentGroup { flex-basis: 240px; }
   .transitionArrow { width: 50px; flex-basis: 50px; }
   .truthGrid h4 { font-size: 25px; }
+  .claimGrid { grid-template-columns: 1fr; }
   .judgmentIntro,
   .ruleEditor,
   .compilerIntro,

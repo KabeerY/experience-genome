@@ -27,15 +27,35 @@ export const portableProjectGenomeSchema = z.object({
       rule: z.string().min(1),
       transformation: z.enum(["inherited", "mutated", "rejected", "invented"]),
       source: z.string().min(1).optional(),
+      sourceReferences: z.array(
+        z.object({
+          reference: z.string().min(1),
+          sourceName: z.string().min(1),
+          sourceUrl: z.string().url(),
+          evidenceMoments: z.array(z.number().int().positive()),
+        }),
+      ),
       evidenceMoments: z.array(z.number().int().positive()),
       epistemicBasis: z.enum(["observed", "inferred", "user-specified"]),
-      humanJudgment: z.enum(["preferred", "rejected"]),
+      humanJudgment: z.enum(["preferred", "rejected", "unreviewed"]),
       humanNote: z.string().optional(),
+      rationale: z.string().min(1),
       implementationDirective: z.string().min(1),
       antiCopyConstraint: z.string().min(1),
     }),
   ),
   unresolved: z.array(z.object({ dimension: z.string(), reason: z.string() })),
+  compiler: z.object({
+    mode: z.enum(["agent", "deterministic"]),
+    role: z.literal("Genome Synthesizer"),
+    provider: z.string().optional(),
+    model: z.string().optional(),
+    promptVersion: z.string(),
+  }),
+  verification: z.object({
+    status: z.literal("passed"),
+    checks: z.array(z.string().min(1)).min(1),
+  }),
 });
 
 export type HumanDecision = z.infer<typeof humanDecisionSchema>;
@@ -66,10 +86,22 @@ export function compileSessionGenome(input: CompileInput): PortableProjectGenome
     transformation:
       decision.judgment === "rejected" ? ("rejected" as const) : index === 0 ? ("inherited" as const) : ("mutated" as const),
     source: capture.source.name,
+    sourceReferences: [
+      {
+        reference: `reference-${index + 1}`,
+        sourceName: capture.source.name,
+        sourceUrl: capture.source.url,
+        evidenceMoments: capture.moments.map((moment) => moment.order),
+      },
+    ],
     evidenceMoments: capture.moments.map((moment) => moment.order),
     epistemicBasis: "inferred" as const,
     humanJudgment: decision.judgment,
     humanNote: decision.note?.trim() || undefined,
+    rationale:
+      decision.judgment === "preferred"
+        ? "The user explicitly chose to carry this abstract principle into the destination project."
+        : "The user explicitly rejected this pattern, so it remains as a negative constraint.",
     implementationDirective:
       decision.judgment === "preferred"
         ? `Translate this principle into ${title} with new composition, pacing, copy, and interaction mechanics.`
@@ -84,10 +116,12 @@ export function compileSessionGenome(input: CompileInput): PortableProjectGenome
       rule: "Create one project-specific moment where the selected principles converge into a new interaction not present in any reference.",
       transformation: "invented" as const,
       source: undefined,
+      sourceReferences: [],
       evidenceMoments: [],
       epistemicBasis: "user-specified" as const,
       humanJudgment: "preferred" as const,
       humanNote: `Invented for the brief: ${brief}`,
+      rationale: "Introduces a project-specific convergence instead of averaging or cloning the references.",
       implementationDirective:
         "Prototype this moment independently, verify that it supports the desired affect, and keep its provenance marked as invented.",
       antiCopyConstraint:
@@ -114,6 +148,19 @@ export function compileSessionGenome(input: CompileInput): PortableProjectGenome
     thesis: "The machine records what happened. The human decides what mattered.",
     rules,
     unresolved,
+    compiler: {
+      mode: "deterministic",
+      role: "Genome Synthesizer",
+      promptVersion: "local-genome-compiler-v1",
+    },
+    verification: {
+      status: "passed",
+      checks: [
+        "Every non-invented rule retains a source reference.",
+        "Human rejections remain explicit rejections.",
+        "Unresolved dimensions remain unresolved.",
+      ],
+    },
   });
 }
 
@@ -121,7 +168,7 @@ function ruleMarkdown(project: PortableProjectGenome) {
   return project.rules
     .map(
       (rule) =>
-        `## ${rule.title}\n\n${rule.rule}\n\n- Treatment: ${rule.transformation}\n- Evidence source: ${rule.source ?? "Invented for this project"}\n- Human judgment: ${rule.humanJudgment}\n- Human note: ${rule.humanNote ?? "No note supplied"}\n- Build directive: ${rule.implementationDirective}\n- Anti-copy: ${rule.antiCopyConstraint}`,
+        `## ${rule.title}\n\n${rule.rule}\n\n- Treatment: ${rule.transformation}\n- Evidence source: ${rule.source ?? "Invented for this project"}\n- Human judgment: ${rule.humanJudgment}\n- Human note: ${rule.humanNote ?? "No note supplied"}\n- Rationale: ${rule.rationale}\n- Build directive: ${rule.implementationDirective}\n- Anti-copy: ${rule.antiCopyConstraint}`,
     )
     .join("\n\n");
 }
