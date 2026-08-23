@@ -129,7 +129,8 @@ export function LiveWorkshop() {
 
   const activeReference = references.find((reference) => reference.key === activeKey) ?? null;
   const activeInterpretation = activeReference?.interpretation ?? null;
-  const activeFinding = activeReference?.interpretation ?? activeReference?.capture.finding ?? null;
+  const activeFinding = activeReference?.interpretation
+    ?? (activeReference?.interpretationStatus === "error" ? activeReference.capture.finding : null);
   const decidedReferences = useMemo(
     () => references.filter((reference): reference is SessionReference & { decision: HumanDecision } => Boolean(reference.decision)),
     [references],
@@ -168,7 +169,11 @@ export function LiveWorkshop() {
         setProject(restored.project);
         setCaptureStatus(restoredReferences.length ? "ready" : "idle");
         if (restoredActive) {
-          setDraftRule(restoredActive.decision?.rule ?? restoredActive.interpretation?.candidateRule ?? restoredActive.capture.finding.candidateRule);
+          setDraftRule(
+            restoredActive.decision?.rule
+              ?? restoredActive.interpretation?.candidateRule
+              ?? (restoredActive.interpretationStatus === "error" ? restoredActive.capture.finding.candidateRule : ""),
+          );
           setDraftNote(restoredActive.decision?.note ?? "");
           setDraftJudgment(restoredActive.decision?.judgment ?? null);
         }
@@ -234,9 +239,12 @@ export function LiveWorkshop() {
         ),
       );
       setDraftRule((current) =>
-        current === capture.finding.candidateRule ? interpretation.candidateRule : current,
+        current.trim() && current !== capture.finding.candidateRule
+          ? current
+          : interpretation.candidateRule,
       );
     } catch (error) {
+      setDraftRule((current) => current.trim() ? current : capture.finding.candidateRule);
       setReferences((current) =>
         current.map((reference) =>
           reference.key === key
@@ -292,7 +300,7 @@ export function LiveWorkshop() {
       const key = `${capture.source.url}:${capture.capturedAt}`;
       setReferences((current) => [...current, { key, capture, interpretationStatus: "thinking" }]);
       setActiveKey(key);
-      setDraftRule(capture.finding.candidateRule);
+      setDraftRule("");
       setDraftNote("");
       setDraftJudgment(null);
       setCaptureStatus("ready");
@@ -325,7 +333,11 @@ export function LiveWorkshop() {
 
   function selectReference(reference: SessionReference) {
     setActiveKey(reference.key);
-    setDraftRule(reference.decision?.rule ?? reference.capture.finding.candidateRule);
+    setDraftRule(
+      reference.decision?.rule
+        ?? reference.interpretation?.candidateRule
+        ?? (reference.interpretationStatus === "error" ? reference.capture.finding.candidateRule : ""),
+    );
     setDraftNote(reference.decision?.note ?? "");
     setDraftJudgment(reference.decision?.judgment ?? null);
   }
@@ -590,7 +602,11 @@ export function LiveWorkshop() {
                               src={moment.visual.imageDataUrl}
                             />
                           ) : (
-                            <><i /><b /></>
+                            <div className={styles.frameUnavailable}>
+                              <Eye size={19} />
+                              <strong>NO RENDERED FRAME</strong>
+                              <small>Structured evidence only</small>
+                            </div>
                           )}
                           <span>{String(moment.order).padStart(2, "0")}</span>
                           {moment.visual && (
@@ -662,6 +678,17 @@ export function LiveWorkshop() {
                 )}
               </section>
 
+              {activeReference.interpretationStatus === "thinking" && (
+                <section aria-busy="true" className={styles.interpretationPending}>
+                  <span><LoaderCircle className={styles.spin} size={22} /></span>
+                  <div>
+                    <small>VERIFICATION IN PROGRESS</small>
+                    <h4>Holding the evidence still.</h4>
+                    <p>No provisional observation or rule is shown until the model response passes provenance checks.</p>
+                  </div>
+                </section>
+              )}
+
               {activeFinding && <section className={styles.truthGrid}>
                 <article>
                   <span className={styles.observedLabel}><Eye size={14} /> OBSERVED</span>
@@ -709,7 +736,7 @@ export function LiveWorkshop() {
                 </section>
               )}
 
-              <section className={styles.judgmentSection}>
+              {activeReference.interpretationStatus !== "thinking" && <section className={styles.judgmentSection}>
                 <div className={styles.judgmentIntro}>
                   <span className={styles.stepNumber}>03</span>
                   <small>NOW THE MACHINE STOPS</small>
@@ -746,7 +773,7 @@ export function LiveWorkshop() {
                     <div className={styles.decisionSaved}><CheckCircle2 size={15} /> Judgment attached to this live evidence.</div>
                   )}
                 </div>
-              </section>
+              </section>}
             </div>
           )}
         </div>

@@ -1,6 +1,7 @@
 import "server-only";
 
 import { buildOrderedContactSheet } from "@/lib/agents/contact-sheet";
+import { enforceEvidenceProvenance } from "@/lib/agents/provenance";
 import { evidenceInterpretationDraftSchema, evidenceInterpretationSchema } from "@/lib/agents/schema";
 import { liveCaptureSchema, type LiveCapture } from "@/lib/capture/public-contract";
 import { generateStructured, getModelIdentity } from "@/lib/model/provider";
@@ -63,29 +64,15 @@ export async function interpretCapture(rawCapture: unknown) {
         : "Pixel frames remain human-visible and exportable. Your input contains the browser-measured properties and visible headings from each frame, not the pixels themselves.",
       capture: interpretationInput(capture),
     }),
-    validate: (value) => {
-      const issues: string[] = [];
-      const inferenceLanguage = /\b(?:suggests?|indicates?|implies?|may|might|probably|likely|appears?|seems?|intended|purpose|creates?)\b/i;
-      if (inferenceLanguage.test(value.observation)) {
-        issues.push("The observation summary contains interpretive language; move that language to inference.");
-      }
-      for (const claim of value.claims) {
-        if (claim.epistemicBasis === "observed" && claim.evidenceMoments.length === 0) {
-          issues.push(`Observed claim “${claim.title}” has no evidence moments.`);
-        }
-        if (claim.epistemicBasis === "observed" && inferenceLanguage.test(claim.statement)) {
-          issues.push(`Observed claim “${claim.title}” contains interpretive language.`);
-        }
-        for (const moment of claim.evidenceMoments) {
-          if (!validMoments.has(moment)) issues.push(`Claim “${claim.title}” cites unknown moment ${moment}.`);
-        }
-      }
-      return issues;
-    },
   });
+  const provenanceSafeDraft = enforceEvidenceProvenance(
+    draft,
+    validMoments,
+    capture.finding.observation,
+  );
 
   return evidenceInterpretationSchema.parse({
-    ...draft,
+    ...provenanceSafeDraft,
     version: "evidence-interpretation@1",
     agent: {
       role: "Evidence Interpreter",
@@ -99,6 +86,7 @@ export async function interpretCapture(rawCapture: unknown) {
       checks: [
         "Every observed claim cites a captured moment.",
         "Every cited moment exists in the live trace.",
+        "Interpretive observed claims are deterministically downgraded.",
         "Normative preference remains reserved for the human.",
       ],
     },
