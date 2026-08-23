@@ -127,6 +127,28 @@ function safeRenderedFailure(error: unknown) {
     .slice(0, 500);
 }
 
+function retryableRenderedFailure(error: unknown) {
+  if (!(error instanceof Error)) return false;
+  return /(?:connectOverCDP|timeout|ECONNRESET|socket|websocket)/i.test(error.message);
+}
+
+async function captureRenderedJourneyWithRetry(url: URL) {
+  try {
+    return await captureRenderedJourney(url);
+  } catch (firstError) {
+    console.error(`[capture] Rendered browser layer attempt 1 failed: ${safeRenderedFailure(firstError)}`);
+    if (!retryableRenderedFailure(firstError)) return undefined;
+
+    await new Promise((resolve) => setTimeout(resolve, 1_250));
+    try {
+      return await captureRenderedJourney(url);
+    } catch (secondError) {
+      console.error(`[capture] Rendered browser layer attempt 2 failed: ${safeRenderedFailure(secondError)}`);
+      return undefined;
+    }
+  }
+}
+
 function normalizeCapture(
   raw: unknown,
   requestedUrl: URL,
@@ -317,10 +339,7 @@ export async function capturePublicExperience(input: {
     brightDataResponseSchema.parse(payload);
     // Bright Data accounts may serialize collector and Browser API work. Start
     // the rendered pass only after the structured collector has released.
-    const renderedJourney = await captureRenderedJourney(requestedUrl).catch((error) => {
-      console.error(`[capture] Rendered browser layer failed: ${safeRenderedFailure(error)}`);
-      return undefined;
-    });
+    const renderedJourney = await captureRenderedJourneyWithRetry(requestedUrl);
     return normalizeCapture(payload, requestedUrl, input.intent, startedAt, renderedJourney);
   } catch (error) {
     if (error instanceof LiveCaptureError) throw error;
