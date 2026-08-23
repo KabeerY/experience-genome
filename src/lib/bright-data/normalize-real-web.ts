@@ -16,6 +16,9 @@ const replaySchema = z.object({
   collectorId: z.string().startsWith("c_"),
   snapshotId: z.string(),
   capturedAt: z.string(),
+  traceId: z.string().optional(),
+  referenceId: z.string().optional(),
+  sourceName: z.string().optional(),
   dataset: z.array(
     z.object({
       experience_states: z.array(realWebStateSchema).min(2),
@@ -49,9 +52,9 @@ export function normalizeRealWebReplay(input: unknown): ExperienceTrace {
   }));
 
   return experienceTraceSchema.parse({
-    id: "trace-linear-real-web-v1",
-    referenceId: "ref-linear-real-web",
-    sourceName: "Linear public landing page",
+    id: replay.traceId ?? "trace-real-web-v1",
+    referenceId: replay.referenceId ?? "ref-real-web",
+    sourceName: replay.sourceName ?? new URL(record.product_page_url).hostname,
     sourceUrl: record.product_page_url,
     sourceMode: "verified-replay",
     collectorId: replay.collectorId,

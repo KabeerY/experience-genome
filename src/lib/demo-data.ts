@@ -1,11 +1,11 @@
 import driftBaselineReplay from "@/data/replays/drift-baseline.json";
-import linearRealWebReplay from "@/data/replays/linear-real-web.json";
+import razorpayRealWebReplay from "@/data/replays/razorpay-real-web.json";
 import { normalizeFixtureReplay } from "@/lib/bright-data/normalize-fixture";
 import { normalizeRealWebReplay } from "@/lib/bright-data/normalize-real-web";
 import type { ExperienceGenome, ProjectGenome } from "@/lib/genome/schema";
 
 export const demoTrace = normalizeFixtureReplay(driftBaselineReplay);
-export const realWebTrace = normalizeRealWebReplay(linearRealWebReplay);
+export const realWebTrace = normalizeRealWebReplay(razorpayRealWebReplay);
 
 export const demoGenome: ExperienceGenome = {
   id: "genome-drift-lab",
@@ -144,13 +144,13 @@ export const demoProjectGenome: ProjectGenome = {
 };
 
 export const realWebGenome: ExperienceGenome = {
-  id: "genome-linear-real-web",
-  referenceId: "ref-linear-real-web",
-  name: "Linear public landing-page genome",
+  id: "genome-razorpay-buildathon",
+  referenceId: "ref-razorpay-buildathon",
+  name: "Razorpay Buildathon experience genome",
   claims: [
     {
       id: "LC01",
-      referenceId: "ref-linear-real-web",
+      referenceId: "ref-razorpay-buildathon",
       dimension: "interaction",
       statement: "Successive scrolls traverse three semantically distinct page regions.",
       interpretation: "The bounded capture establishes sequence, but not animation quality or scroll distance.",
@@ -160,7 +160,7 @@ export const realWebGenome: ExperienceGenome = {
     },
     {
       id: "LC02",
-      referenceId: "ref-linear-real-web",
+      referenceId: "ref-razorpay-buildathon",
       dimension: "semantics",
       statement: "The page appears to distribute its product story across a long vertical narrative.",
       interpretation: "This is an inference from region order and captured headings, not a measurement of reader attention.",
@@ -170,7 +170,7 @@ export const realWebGenome: ExperienceGenome = {
     },
     {
       id: "LC03",
-      referenceId: "ref-linear-real-web",
+      referenceId: "ref-razorpay-buildathon",
       dimension: "motion",
       statement: "Transition timing, easing, and visual continuity remain unknown.",
       interpretation: "The collector observed navigation order but returned no reliable motion measurements.",

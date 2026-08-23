@@ -14,7 +14,7 @@ Most design tools stop at screenshots or DOM structure. Experience Compiler begi
 
 ## What it does
 
-- Captures public interactive references as structured state/action/state traces, including a persisted real-web Linear run.
+- Captures public interactive references as structured state/action/state traces, including a persisted real Razorpay Buildathon run.
 - Presents the complete evidence-to-pack workflow as a one-page guided quest, with a separate custom-reference capture composer.
 - Separates observed, inferred, user-specified and unresolved claims.
 - Stores human taste independently as preferred, rejected, neutral or unreviewed.
@@ -25,7 +25,7 @@ Most design tools stop at screenshots or DOM structure. Experience Compiler begi
 
 ## How Bright Data is used
 
-Bright Data is the grounding layer. Two custom Scraper Studio collectors produced a real public Linear capture and the separate controlled drift artifacts. The baseline, broken, heal, recovery and real-web outputs are versioned in `evidence/brightdata/`, including stable `c_*` identities. The deployed public UI never exposes an unrestricted live endpoint; it replays verified results to preserve credits and prevent abuse. Seven of 5,000 record credits were used in total; a public judge view uses zero.
+Bright Data is the grounding layer. Two custom Scraper Studio collectors produced real public Linear and Razorpay captures plus separate controlled drift artifacts. The baseline, broken, heal, recovery and real-web outputs are versioned in `evidence/brightdata/`, including stable `c_*` identities. Eight of 5,000 record credits were used in total; a replayed judge journey uses zero additional credits.
 
 ## Architecture
 

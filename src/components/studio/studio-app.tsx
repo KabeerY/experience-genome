@@ -318,7 +318,7 @@ export function StudioApp() {
           <span className={styles.liveDot} />
           2 VERIFIED BRIGHT DATA REPLAYS
           <i />
-          7 / 5,000 RECORDS USED
+          8 / 5,000 RECORDS USED
         </div>
         <nav>
           <Link href="/lab/drift"><RefreshCw size={14} /> Drift Lab</Link>
@@ -400,7 +400,7 @@ export function StudioApp() {
           <div className={styles.referenceIndex}>B</div>
           <div>
             <span>REAL WEB / BRIGHT DATA VERIFIED</span>
-            <strong>Linear public landing page</strong>
+            <strong>Razorpay Buildathon</strong>
             <small>
               1 record · 3 regions · {realWebJudgment === "preferred" ? "selected for synthesis" : realWebJudgment === "rejected" ? "rejected by human" : "judgment pending"}
             </small>

@@ -47,6 +47,7 @@ type CustomBrief = {
   host: string;
   note: string;
   url: string;
+  verifiedCapture: boolean;
 };
 
 function SectionIndex({ children }: { children: string }) {
@@ -137,6 +138,15 @@ function StoryWorkshop() {
     setMode("guided");
   }
 
+  function startRazorpayQuest() {
+    setReference("linear");
+    setReplayStatus("idle");
+    setObservationConfirmed(false);
+    setJudgment("unreviewed");
+    setPackStatus("idle");
+    setMode("guided");
+  }
+
   function chooseReference(nextReference: ReferenceChoice) {
     setReference(nextReference);
     setReplayStatus("idle");
@@ -165,6 +175,9 @@ function StoryWorkshop() {
         suppliedNote ||
         "Preserve the scroll rhythm, layered motion, section transitions, and the order in which meaning is revealed.",
       url: parsed.toString(),
+      verifiedCapture:
+        parsed.hostname.replace(/^www\./, "") === "razorpay.com" &&
+        parsed.pathname.startsWith("/buildathon"),
     });
   }
 
@@ -252,7 +265,7 @@ function StoryWorkshop() {
                 <button className={styles.startSource} onClick={() => chooseReference("linear")} type="button">
                   <span className={styles.startFlag}><MousePointer2 size={14} /> START HERE</span>
                   <i>B</i>
-                  <div><small>REAL WEB · BRIGHT DATA VERIFIED</small><strong>Linear public landing page</strong><p>Replay three scroll-separated semantic regions.</p></div>
+                  <div><small>REAL WEB · BRIGHT DATA VERIFIED</small><strong>Razorpay Buildathon</strong><p>Replay three scroll-separated semantic regions captured moments ago.</p></div>
                   <ArrowRight size={24} />
                 </button>
                 <button onClick={() => chooseReference("archive")} type="button">
@@ -392,17 +405,26 @@ function StoryWorkshop() {
             <div aria-live="polite" className={styles.customNotice} role="status">
               <div className={styles.noticeHeading}>
                 <span><Fingerprint size={22} /></span>
-                <div><small>READY · 0 CREDITS SPENT</small><strong>Capture brief ready for {customBrief.host}.</strong></div>
+                <div>
+                  <small>{customBrief.verifiedCapture ? "BRIGHT DATA VERIFIED · 1 RECORD" : "BRIEF READY · NOT YET COLLECTED"}</small>
+                  <strong>{customBrief.verifiedCapture ? `Real capture ready for ${customBrief.host}.` : `Capture brief ready for ${customBrief.host}.`}</strong>
+                </div>
               </div>
               <dl className={styles.briefDetails}>
                 <div><dt>REFERENCE</dt><dd>{customBrief.url}</dd></div>
                 <div><dt>OBSERVE</dt><dd>Scroll states, pinned elements, depth cues, transition order, and semantic reveals.</dd></div>
                 <div><dt>HUMAN QUESTION</dt><dd>{customBrief.note}</dd></div>
               </dl>
-              <p><strong>{customBrief.host} has not been scraped.</strong> Live collection remains operator-gated to protect 4,993 judge credits. The separate verified demo uses persisted Linear evidence.</p>
+              <p>
+                {customBrief.verifiedCapture
+                  ? <><strong>This URL was scraped with Bright Data collector c_mt63a…bei.</strong> One payload returned three ordered states; 4,992 credits remain.</>
+                  : <><strong>{customBrief.host} has not been scraped yet.</strong> Arbitrary public runs remain bounded to protect 4,992 judge credits.</>}
+              </p>
               <div className={styles.noticeActions}>
                 <button className={styles.secondaryNoticeAction} onClick={() => setCustomBrief(null)} type="button">Use a different URL</button>
-                <button onClick={startGuidedQuest} type="button">Launch separate guided demo <ArrowRight size={16} /></button>
+                <button onClick={customBrief.verifiedCapture ? startRazorpayQuest : startGuidedQuest} type="button">
+                  {customBrief.verifiedCapture ? "Open this real Razorpay trace" : "Launch verified guided demo"} <ArrowRight size={16} />
+                </button>
               </div>
             </div>
           )}

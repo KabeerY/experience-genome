@@ -32,7 +32,7 @@ Point out the explicit unresolved dimensions.
 
 At **The Experience Workshop**, choose **Play the guided quest**.
 
-1. Click **B / Linear landing page**.
+1. Click **B / Razorpay Buildathon**.
 2. Show the real collector suffix and three sparse regions.
 3. Point out that timing, easing, pointer physics and audio remain unresolved.
 4. Click **Keep**.
@@ -66,5 +66,5 @@ Show the collector ID and verified ledger.
 - Ensure **Experience Pack downloaded** appears.
 - Say “action-conditioned change,” not “universal causation.”
 - Say “controlled same-ID healing proof,” not “it heals every website.”
-- Mention seven of 5,000 records used; public views trigger zero.
+- Mention eight of 5,000 records used; replayed judge views trigger zero additional records.
 - Keep the uploaded video under three minutes.

@@ -32,7 +32,7 @@ That is why `epistemicBasis` and `humanJudgment` are separate fields. A rule can
 1. Scroll through a light parallax expedition where Akshar reads structure and Gati follows change.
 2. Watch the manga-style problem story resolve into a state/action/state evidence path and a branching Experience Genome.
 3. Enter the embedded **Guided Quest** without leaving the page.
-4. Switch from the controlled fixture to a real persisted Linear capture.
+4. Open the real Razorpay Buildathon capture collected with Bright Data.
 5. Mark the real observation **Keep** and watch `R05` enter the multi-reference Project Genome without rewriting evidence.
 6. Compile a real `experience-pack.zip` containing canonical JSON, evidence, anti-copy constraints and adapters for Codex, Claude, Gemini, Cursor and Copilot.
 7. Open the full **Genome Lens** for deeper provenance inspection or **Drift Lab** for the deterministic same-Collector-ID healing proof.
@@ -53,7 +53,7 @@ Bright Data is the perception layer—not a decorative API call.
 
 The public deployment never exposes an unrestricted collection endpoint. It runs in **Verified Replay** mode. Live collection is an operator-only submission/video step. This prevents abuse and preserves the 5,000-credit grant for judging.
 
-The completed proof used seven one-record payloads total: six for the transparent controlled healing experiment and one for the real external reference. That is **7 / 5,000 credits (0.14%)**, leaving 4,993 for judge follow-up and testing. No broad crawling, public live endpoint, or automatic retry loop exists.
+The completed proof used eight one-record payloads total: six for the transparent controlled healing experiment and two bounded real-web runs. That is **8 / 5,000 credits (0.16%)**, leaving 4,992 for judge follow-up and testing. No broad crawling or automatic retry loop exists.
 
 ### Bright Data evidence ledger
 
@@ -67,6 +67,7 @@ The completed proof used seven one-record payloads total: six for the transparen
 | Recovery job | Verified | exact sequences 1/2/3 and complete contract · [`drift-sequence-recovery-run.json`](evidence/brightdata/drift-sequence-recovery-run.json) |
 | Real-web collector | Verified custom collector | `c_mt63a8sa1etvcxxbei` · [`real-web-observer-create.json`](evidence/brightdata/real-web-observer-create.json) |
 | Linear public-web capture | Verified, intentionally sparse | 1 payload / 3 ordered regions · [`real-web-run.json`](evidence/brightdata/real-web-run.json) |
+| Razorpay Buildathon capture | Verified, captured during final product QA | 1 payload / 3 ordered regions · [`razorpay-real-web-run.json`](evidence/brightdata/razorpay-real-web-run.json) |
 
 The UI and this table remain explicit about unknown or sparse evidence. A failed attempt is kept in history rather than erased. The controlled experiment used six one-record runs—including three visible intermediate failures while refining the heal—and the real-web proof used one. See [`drift-ledger.json`](evidence/brightdata/drift-ledger.json) for the controlled audit trail.
 

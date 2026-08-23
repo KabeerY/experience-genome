@@ -32,7 +32,7 @@ export default function DriftLabPage() {
         <aside>
           <span>BRIGHT DATA BUDGET POLICY</span>
           <strong>Replay by default</strong>
-          <p>No live run is triggered by this public interface. Seven of 5,000 record credits were used; 4,993 remain.</p>
+          <p>No live run is triggered by this reliability interface. Eight of 5,000 record credits were used; 4,992 remain.</p>
         </aside>
       </section>
 
