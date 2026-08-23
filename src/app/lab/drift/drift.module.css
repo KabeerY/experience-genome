@@ -68,8 +68,9 @@
 .sequence dl div { display: flex; justify-content: space-between; padding: 11px 0; border-bottom: 1px solid var(--line); font: 8px/1 var(--font-geist-mono), monospace; text-transform: uppercase; letter-spacing: 0.1em; }
 .sequence dt { color: #5f605a; }
 .sequence dd { margin: 0; color: #96928a; }
-.sequence article > a, .pending { display: flex; align-items: center; gap: 8px; color: #b8a66f; font: 8px/1 var(--font-geist-mono), monospace; letter-spacing: 0.11em; text-transform: uppercase; }
+.sequence article > a, .pending, .verified { display: flex; align-items: center; gap: 8px; color: #b8a66f; font: 8px/1 var(--font-geist-mono), monospace; letter-spacing: 0.11em; text-transform: uppercase; }
 .pending { color: #726f66; }
+.verified { color: #70c49b; }
 .connector { display: grid; justify-items: center; gap: 12px; color: #76694b; }
 .connector span { writing-mode: vertical-rl; color: #5c5b55; font: 7px/1 var(--font-geist-mono), monospace; letter-spacing: 0.16em; }
 

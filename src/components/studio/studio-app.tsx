@@ -222,6 +222,7 @@ export function StudioApp() {
   const [selectedClaimId, setSelectedClaimId] = useState("C01");
   const [selectedRuleId, setSelectedRuleId] = useState("R01");
   const [compileStatus, setCompileStatus] = useState<"idle" | "working" | "done">("idle");
+  const [replayToken, setReplayToken] = useState(0);
 
   const selectedClaim = claims.find((claim) => claim.id === selectedClaimId) ?? claims[0];
   const selectedRule =
@@ -248,7 +249,7 @@ export function StudioApp() {
       project: demoProjectGenome,
     });
     setCompileStatus("done");
-    window.setTimeout(() => setCompileStatus("idle"), 2200);
+    window.setTimeout(() => setCompileStatus("idle"), 5000);
   }
 
   return (
@@ -261,9 +262,9 @@ export function StudioApp() {
         </Link>
         <div className={styles.runIdentity}>
           <span className={styles.liveDot} />
-          CONTROLLED FIXTURE
+          VERIFIED BRIGHT DATA REPLAY
           <i />
-          SCHEMA V1
+          c_mt62…w5
         </div>
         <nav>
           <Link href="/lab/drift"><RefreshCw size={14} /> Drift Lab</Link>
@@ -280,7 +281,11 @@ export function StudioApp() {
           <p>One rule. Every layer of truth behind it.</p>
         </div>
         <div className={styles.headerActions}>
-          <button className={styles.replayButton} type="button">
+          <button
+            className={styles.replayButton}
+            onClick={() => setReplayToken((token) => token + 1)}
+            type="button"
+          >
             <Play size={14} fill="currentColor" /> Replay verified capture
           </button>
           <button className={styles.compileButton} onClick={compilePack} type="button">
@@ -299,9 +304,9 @@ export function StudioApp() {
         <article className={styles.referenceActive}>
           <div className={styles.referenceIndex}>A</div>
           <div>
-            <span>CONTROLLED / GROUNDED</span>
+            <span>CONTROLLED / BRIGHT DATA VERIFIED</span>
             <strong>Arrival Before Meaning</strong>
-            <small>3 states · 2 actions · 2 deltas</small>
+            <small>1 record · 3 states · 2 deltas</small>
           </div>
           <Check size={16} />
         </article>
@@ -344,9 +349,9 @@ export function StudioApp() {
                 <span>EXPERIENCE TRACE</span>
                 <h2>What actually happened</h2>
               </div>
-              <div className={styles.modeBadge}>CONTROLLED FIXTURE</div>
+              <div className={styles.modeBadge}>VERIFIED REPLAY / c_mt62…w5</div>
             </div>
-            <TraceTimeline />
+            <TraceTimeline key={replayToken} />
           </section>
 
           <section className={styles.genomePanel}>
@@ -498,9 +503,9 @@ export function StudioApp() {
       )}
 
       <footer className={styles.statusbar}>
-        <div><span className={styles.liveDot} /> LOCAL-FIRST DEMO</div>
-        <div>BRIGHT DATA RUN BUDGET <strong>0 RECORDS USED IN APP</strong></div>
-        <div>MODEL <strong>STEALTH/OX-ALPHA</strong></div>
+        <div><span className={styles.liveDot} /> VERIFIED REPLAY MODE</div>
+        <div>PUBLIC VIEW COST <strong>0 LIVE RECORDS</strong></div>
+        <div>SYNTHESIS PROFILE <strong>OX-ALPHA READY</strong></div>
         <div className={issues.length ? styles.issue : styles.pass}>
           {issues.length ? <TriangleAlert size={12} /> : <Check size={12} />}
           PROVENANCE {issues.length ? "CHECK" : "PASS"}

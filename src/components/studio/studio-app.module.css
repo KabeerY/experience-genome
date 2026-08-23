@@ -256,7 +256,9 @@
   align-items: center;
 }
 .timelineSegment { display: contents; }
-.stateCard { min-width: 0; }
+.stateCard { min-width: 0; animation: traceReplay 640ms cubic-bezier(.16,.8,.24,1) both; }
+.timelineSegment:nth-child(2) .stateCard { animation-delay: 180ms; }
+.timelineSegment:nth-child(3) .stateCard { animation-delay: 360ms; }
 .stateTopline { display: flex; justify-content: space-between; margin-bottom: 8px; color: #6f6c65; font: 9px var(--font-geist-mono), monospace; }
 .stateVisual {
   aspect-ratio: 1.25;
@@ -402,6 +404,10 @@
 
 @keyframes orbitSpin { to { transform:rotate(360deg); } }
 @keyframes orbitReverse { to { transform:rotateX(64deg) rotateZ(-360deg); } }
+@keyframes traceReplay {
+  from { opacity:.16; transform:translateY(12px); filter:brightness(.55); }
+  to { opacity:1; transform:translateY(0); filter:brightness(1); }
+}
 
 @media (max-width: 1050px) {
   .topbar { grid-template-columns:1fr auto; }
@@ -441,7 +447,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .visualOrbit,.artifactRingOne,.artifactRingTwo,.spin { animation:none; }
+  .visualOrbit,.artifactRingOne,.artifactRingTwo,.spin,.stateCard { animation:none; }
   .ruleCard,.headerActions button { transition:none; }
 }
-

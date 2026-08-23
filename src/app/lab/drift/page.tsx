@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ArrowRight, Check, CircleDashed, ExternalLink, RefreshCw, ShieldCheck, TriangleAlert } from "lucide-react";
+import { ArrowRight, Check, ExternalLink, RefreshCw, ShieldCheck, TriangleAlert } from "lucide-react";
 import Link from "next/link";
 
 import styles from "./drift.module.css";
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description: "A controlled, public and repeatable Bright Data self-healing proof.",
 };
 
-const collectorId = "PENDING_FIRST_VERIFIED_RUN";
+const collectorId = "c_mt62ojenhz0udx9w5";
 
 export default function DriftLabPage() {
   return (
@@ -44,8 +44,8 @@ export default function DriftLabPage() {
           <p>The collector reads three state records from stable baseline selectors.</p>
           <dl>
             <div><dt>Fixture</dt><dd>baseline-v1</dd></div>
-            <div><dt>Expected</dt><dd>3 records</dd></div>
-            <div><dt>Capture</dt><dd>not run yet</dd></div>
+            <div><dt>Output</dt><dd>1 record / 3 states</dd></div>
+            <div><dt>Capture</dt><dd>d2t…hp3g</dd></div>
           </dl>
           <Link href="/fixture?representation=baseline">Open baseline <ExternalLink size={13} /></Link>
         </article>
@@ -60,7 +60,7 @@ export default function DriftLabPage() {
           <dl>
             <div><dt>Fixture</dt><dd>shifted-v2</dd></div>
             <div><dt>Expected</dt><dd>old path fails</dd></div>
-            <div><dt>Capture</dt><dd>not run yet</dd></div>
+            <div><dt>Capture</dt><dd>d2t…kaet8</dd></div>
           </dl>
           <Link href="/fixture?representation=shifted">Open mutation <ExternalLink size={13} /></Link>
         </article>
@@ -75,9 +75,9 @@ export default function DriftLabPage() {
           <dl>
             <div><dt>Collector</dt><dd>{collectorId}</dd></div>
             <div><dt>Required</dt><dd>same c_*</dd></div>
-            <div><dt>Status</dt><dd>proof pending</dd></div>
+            <div><dt>Status</dt><dd>exact contract restored</dd></div>
           </dl>
-          <span className={styles.pending}><CircleDashed size={13} /> Awaiting bounded live proof</span>
+          <span className={styles.verified}><Check size={13} /> Same-ID recovery verified</span>
         </article>
       </section>
 
@@ -89,12 +89,12 @@ export default function DriftLabPage() {
       </section>
 
       <section className={styles.proofLedger}>
-        <header><span>PROOF LEDGER</span><strong>TRUTHFUL UNTIL CAPTURED</strong></header>
-        <div><span>Collector creation</span><em>pending</em><code>c_* will appear here</code></div>
-        <div><span>Baseline job</span><em>pending</em><code>j_* / 3 records</code></div>
-        <div><span>Broken job</span><em>pending</em><code>j_* / expected failure</code></div>
-        <div><span>Heal operation</span><em>pending</em><code>refactor_template / same c_*</code></div>
-        <div><span>Recovery job</span><em>pending</em><code>j_* / 3 records</code></div>
+        <header><span>PROOF LEDGER</span><strong>VERIFIED / RAW JSON IN REPO</strong></header>
+        <div><span>Collector creation</span><em>verified</em><code>c_mt62ojenhz0udx9w5</code></div>
+        <div><span>Baseline job</span><em>3 states</em><code>d2t1787505924688…</code></div>
+        <div><span>Broken job</span><em>empty</em><code>d2t1787505992927…</code></div>
+        <div><span>Heal operation</span><em>same ID</em><code>approve + save / c_mt62…w5</code></div>
+        <div><span>Recovery job</span><em>3 states</em><code>d2t1787506588795…</code></div>
       </section>
     </main>
   );

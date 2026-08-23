@@ -1,0 +1,71 @@
+{
+  "collector_id": "c_mt62ojenhz0udx9w5",
+  "collector_view_url": "https://brightdata.com/cp/scrapers/c_mt62ojenhz0udx9w5",
+  "source_role": "controlled public mutation fixture",
+  "baseline": {
+    "response_id": "d2t1787505924688rhn201e1hp3g",
+    "captured_at": "2026-08-23T17:25:24.688Z",
+    "url": "https://experience-genome.vercel.app/fixture?representation=baseline",
+    "dataset_records": 1,
+    "experience_states": 3,
+    "result": "contract satisfied"
+  },
+  "broken": {
+    "response_id": "d2t1787505992927ru9uv0pkaet8",
+    "captured_at": "2026-08-23T17:26:32.927Z",
+    "url": "https://experience-genome.vercel.app/fixture?representation=shifted",
+    "dataset_records": 1,
+    "experience_states": 0,
+    "result": "controlled contract failure observed"
+  },
+  "heal": {
+    "status": "done",
+    "collector_id_before": "c_mt62ojenhz0udx9w5",
+    "collector_id_after": "c_mt62ojenhz0udx9w5",
+    "artifacts": [
+      "drift-heal.json",
+      "drift-heal-precise.json",
+      "drift-heal-sequence.json"
+    ],
+    "completed_steps_include": [
+      "code_fixer",
+      "step_preview_runner",
+      "request_fulfillment_validator",
+      "user_approval",
+      "save_new_template"
+    ],
+    "result": "same collector restored the exact output contract after two evidence-led refinements"
+  },
+  "recovery": {
+    "status": "verified",
+    "response_id": "d2t1787506588795r4djop4hkti8",
+    "captured_at": "2026-08-23T17:36:28.795Z",
+    "url": "https://experience-genome.vercel.app/fixture?representation=shifted",
+    "dataset_records": 1,
+    "experience_states": 3,
+    "sequences": ["1", "2", "3"],
+    "result": "exact contract restored"
+  },
+  "bounded_debug_runs": [
+    {
+      "response_id": "d2t1787506259407rksm4776jnrg",
+      "captured_at": "2026-08-23T17:30:59.407Z",
+      "result": "empty; default template had not recovered"
+    },
+    {
+      "response_id": "d2t1787506311012rhv0sn7qv7ao",
+      "captured_at": "2026-08-23T17:31:51.012Z",
+      "result": "empty; dev verification confirmed first heal was insufficient"
+    },
+    {
+      "response_id": "d2t1787506494164rttlqo93tdso",
+      "captured_at": "2026-08-23T17:34:54.164Z",
+      "result": "three states recovered; sequence and section ID still degraded"
+    }
+  ],
+  "dataset_record_budget": {
+    "actual_controlled_runs": 6,
+    "grant_shown_in_dashboard": 5000,
+    "fraction_used_percent": 0.12
+  }
+}

@@ -152,11 +152,11 @@ export function ExperienceStory() {
           </article>
         </div>
         <div className={styles.traceRibbon}>
-          <div><span>00:00</span><strong>HERO</strong><small>light 82%</small></div>
+          <div><span>00:00</span><strong>HERO</strong><small>initial load</small></div>
           <i><ArrowRight size={16} /><b>scroll +410px</b></i>
-          <div><span>00:01.2</span><strong>APPROACH</strong><small>light 44%</small></div>
+          <div><span>00:01.2</span><strong>APPROACH</strong><small>after scroll</small></div>
           <i><ArrowRight size={16} /><b>wait 240ms</b></i>
-          <div className={styles.traceReveal}><span>00:01.44</span><strong>REVEAL</strong><small>text visible</small></div>
+          <div className={styles.traceReveal}><span>00:01.44</span><strong>REVEAL</strong><small>after wait</small></div>
         </div>
       </section>
 
@@ -180,7 +180,7 @@ export function ExperienceStory() {
           <div className={styles.ruleStatement}>
             <span>GENOME RULE / C01</span>
             <h3>Spatial arrival precedes semantic reveal.</h3>
-            <p>The visual event establishes scale before asking the user to read.</p>
+            <p>The recorded transition establishes approach before asking the user to read.</p>
           </div>
           <div className={styles.rulePath}>
             <span>EVIDENCE PATH</span>
@@ -237,7 +237,7 @@ export function ExperienceStory() {
           <div className={styles.foundryCore}><Sparkles size={23} /><span>PROJECT<br />GENOME</span></div>
           <div className={styles.projectRules}>
             <article data-kind="inherited"><span>INHERITED</span><strong>Arrival before language</strong></article>
-            <article data-kind="mutated"><span>MUTATED</span><strong>Focused contraction</strong></article>
+            <article data-kind="mutated"><span>MUTATED</span><strong>Rhythmic withholding</strong></article>
             <article data-kind="rejected"><span>REJECTED</span><strong>No glass-card field</strong></article>
             <article data-kind="invented"><span>INVENTED</span><strong>Orbital capture</strong></article>
           </div>
