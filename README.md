@@ -1,6 +1,6 @@
 # EXPERIENCE//COMPILER
 
-![Experience Compiler cinematic landing](public/readme/hero.png)
+![Experience Compiler cinematic landing](public/readme/hero.jpg)
 
 **Observe the experience. Supply the judgment. Compile what mattered.**
 
@@ -27,7 +27,7 @@ A judge can paste any public URL and use the real workflow:
 
 No login or prepared per-site response is required. A workshop session persists locally in IndexedDB so a browser refresh does not destroy captured evidence or human judgment.
 
-![Five-moment Bright Data experience trace](public/readme/live-evidence.png)
+![Five-moment Bright Data experience trace](public/readme/live-evidence.jpg)
 
 _Fresh production run against `razorpay.com/foundation-model`: one structured trace plus five rendered browser states from the supplied URL._
 
@@ -57,7 +57,7 @@ Experience Compiler keeps three truths distinct:
 
 That is why evidence basis and human judgment are separate fields. Something can be directly observed and still be disliked; something can be inferred and preferred.
 
-![Observed, inferred, and unresolved evidence lanes](public/readme/provenance.png)
+![Observed, inferred, and unresolved evidence lanes](public/readme/provenance.jpg)
 
 _The interface does not promote an inference into an observation, and it keeps missing continuous motion, easing, hover, audio, and implementation details visible as unknowns._
 
@@ -72,7 +72,7 @@ If the rendered layer is unavailable, the interface says so and the model receiv
 
 The separate [Drift Lab](https://experience-genome.vercel.app/lab/drift) is a controlled fixture for the repeatable break → same-collector heal → recover proof. It is deliberately separate from arbitrary live web capture.
 
-![Controlled same-collector healing proof](public/readme/drift-lab.png)
+![Controlled same-collector healing proof](public/readme/drift-lab.jpg)
 
 Historical Bright Data artifacts, including failed attempts, the controlled recovery ledger, and a redacted five-moment production verification receipt, remain in [`evidence/brightdata`](evidence/brightdata).
 
@@ -137,7 +137,7 @@ Core stack:
 
 ## Experience Pack
 
-![Compiled Project Genome and portable Experience Pack](public/readme/project-genome.png)
+![Compiled Project Genome and portable Experience Pack](public/readme/project-genome.jpg)
 
 _The source experience becomes attributed, transformed rules—not copied pixels. The compiled artifact can be copied as agent context or downloaded as a vendor-neutral pack._
 
