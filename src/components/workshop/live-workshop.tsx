@@ -94,6 +94,16 @@ function modelLabel(model?: string, provider?: string) {
   return providerName ? `${readable} via ${providerName}` : readable;
 }
 
+async function responsePayload(response: Response, emptyMessage: string): Promise<unknown> {
+  const text = await response.text();
+  if (!text.trim()) throw new Error(emptyMessage);
+  try {
+    return JSON.parse(text) as unknown;
+  } catch {
+    throw new Error(emptyMessage);
+  }
+}
+
 export function LiveWorkshop() {
   const urlInput = useRef<HTMLInputElement>(null);
   const evidenceRegion = useRef<HTMLDivElement>(null);
@@ -203,7 +213,10 @@ export function LiveWorkshop() {
         body: JSON.stringify({ capture }),
         signal: AbortSignal.timeout(115_000),
       });
-      const payload: unknown = await response.json();
+      const payload = await responsePayload(
+        response,
+        "The interpretation service ended before returning a result. Your verified capture is intact; retry the interpreter.",
+      );
       if (!response.ok) {
         const message =
           payload && typeof payload === "object" && "error" in payload && typeof payload.error === "string"
@@ -261,7 +274,10 @@ export function LiveWorkshop() {
         body: JSON.stringify({ url, intent: intent || undefined }),
         signal: AbortSignal.timeout(115_000),
       });
-      const payload: unknown = await response.json();
+      const payload = await responsePayload(
+        response,
+        "The live browser ended before returning readable evidence. Nothing stored was substituted; retry this URL.",
+      );
 
       if (!response.ok) {
         const parsedError = captureErrorSchema.safeParse(payload);
@@ -336,7 +352,10 @@ export function LiveWorkshop() {
         }),
         signal: AbortSignal.timeout(115_000),
       });
-      const payload: unknown = await response.json();
+      const payload = await responsePayload(
+        response,
+        "The synthesis service ended before returning a Project Genome. Your evidence and judgments are intact; retry synthesis.",
+      );
       if (!response.ok) {
         const message =
           payload && typeof payload === "object" && "error" in payload && typeof payload.error === "string"
