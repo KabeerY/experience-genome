@@ -42,6 +42,11 @@ import {
   type HumanDecision,
   type PortableProjectGenome,
 } from "@/lib/compiler/session-pack";
+import {
+  clearWorkshopSession,
+  loadWorkshopSession,
+  saveWorkshopSession,
+} from "@/lib/client/workshop-session";
 
 import styles from "./live-workshop.module.css";
 
@@ -95,6 +100,7 @@ export function LiveWorkshop() {
   const [compileStatus, setCompileStatus] = useState<"idle" | "thinking" | "error">("idle");
   const [compileError, setCompileError] = useState<string | null>(null);
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied">("idle");
+  const [sessionHydrated, setSessionHydrated] = useState(false);
 
   const activeReference = references.find((reference) => reference.key === activeKey) ?? null;
   const activeInterpretation = activeReference?.interpretation ?? null;
@@ -111,6 +117,60 @@ export function LiveWorkshop() {
     }, 1_150);
     return () => window.clearInterval(interval);
   }, [captureStatus]);
+
+  useEffect(() => {
+    let cancelled = false;
+    void loadWorkshopSession()
+      .then((result) => {
+        if (cancelled || !result.success) return;
+        const restored = result.data;
+        const restoredReferences: SessionReference[] = restored.references.map((reference) =>
+          reference.interpretationStatus === "thinking" && !reference.interpretation
+            ? {
+                ...reference,
+                interpretationStatus: "error",
+                interpretationError: "The previous agent run was interrupted by a page reload.",
+              }
+            : reference,
+        );
+        const restoredActive = restoredReferences.find((reference) => reference.key === restored.activeKey)
+          ?? restoredReferences[0];
+        setReferences(restoredReferences);
+        setActiveKey(restoredActive?.key ?? null);
+        setProjectTitle(restored.projectTitle);
+        setProjectBrief(restored.projectBrief);
+        setDesiredAffect(restored.desiredAffect);
+        setProject(restored.project);
+        setCaptureStatus(restoredReferences.length ? "ready" : "idle");
+        if (restoredActive) {
+          setDraftRule(restoredActive.decision?.rule ?? restoredActive.interpretation?.candidateRule ?? restoredActive.capture.finding.candidateRule);
+          setDraftNote(restoredActive.decision?.note ?? "");
+          setDraftJudgment(restoredActive.decision?.judgment ?? null);
+        }
+      })
+      .catch(() => undefined)
+      .finally(() => {
+        if (!cancelled) setSessionHydrated(true);
+      });
+    return () => { cancelled = true; };
+  }, []);
+
+  useEffect(() => {
+    if (!sessionHydrated) return;
+    const timeout = window.setTimeout(() => {
+      void saveWorkshopSession({
+        version: "workshop-session@1",
+        references,
+        activeKey,
+        projectTitle,
+        projectBrief,
+        desiredAffect,
+        project,
+        savedAt: new Date().toISOString(),
+      }).catch(() => undefined);
+    }, 350);
+    return () => window.clearTimeout(timeout);
+  }, [activeKey, desiredAffect, project, projectBrief, projectTitle, references, sessionHydrated]);
 
   async function requestInterpretation(key: string, capture: LiveCapture) {
     setReferences((current) =>
@@ -300,6 +360,19 @@ export function LiveWorkshop() {
     }, 40);
   }
 
+  function startFreshSession() {
+    setReferences([]);
+    setActiveKey(null);
+    setCaptureStatus("idle");
+    setCaptureError(null);
+    setProject(null);
+    setDraftRule("");
+    setDraftNote("");
+    setDraftJudgment(null);
+    void clearWorkshopSession().catch(() => undefined);
+    window.setTimeout(() => document.getElementById("capture-form")?.scrollIntoView({ behavior: "smooth", block: "center" }), 40);
+  }
+
   async function copyAgentContext() {
     if (!project) return;
     const files = buildSessionPackFiles(
@@ -439,6 +512,7 @@ export function LiveWorkshop() {
               ))}
             </div>
             <button className={styles.addReference} onClick={captureAnother} type="button"><Plus size={15} /> Capture another URL</button>
+            <button className={styles.resetSession} onClick={startFreshSession} type="button"><RotateCcw size={13} /> Start a fresh session</button>
             <p>Each reference above came from a separate live browser run in this session.</p>
           </aside>
 

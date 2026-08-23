@@ -225,6 +225,7 @@
 .referenceList b[data-judgment="preferred"] { color: #2f7451; background: #d9eedc; }
 .referenceList b[data-judgment="rejected"] { color: #a04f35; background: #f6ddcc; }
 .addReference { display: flex; width: 100%; min-height: 42px; align-items: center; justify-content: center; gap: 7px; margin-top: 14px; border: 1px dashed rgba(23,59,60,.25); border-radius: 12px; color: #225fb3; font-size: 10px; font-weight: 760; }
+.resetSession { display: flex; width: 100%; align-items: center; justify-content: center; gap: 6px; margin-top: 10px; color: #778782; font-size: 8px; font-weight: 720; }
 .referenceShelf > p { margin: 20px 8px 0; color: #7c8d87; font-size: 10px; line-height: 1.5; }
 
 .evidenceMain { min-width: 0; }
