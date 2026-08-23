@@ -1,101 +1,11 @@
-import type {
-  ExperienceGenome,
-  ExperienceTrace,
-  ProjectGenome,
-} from "@/lib/genome/schema";
+import driftBaselineReplay from "@/data/replays/drift-baseline.json";
+import linearRealWebReplay from "@/data/replays/linear-real-web.json";
+import { normalizeFixtureReplay } from "@/lib/bright-data/normalize-fixture";
+import { normalizeRealWebReplay } from "@/lib/bright-data/normalize-real-web";
+import type { ExperienceGenome, ProjectGenome } from "@/lib/genome/schema";
 
-export const demoTrace: ExperienceTrace = {
-  id: "trace-drift-lab-v1",
-  referenceId: "ref-drift-lab",
-  sourceName: "Experience Compiler Drift Lab",
-  sourceUrl: "https://experience-genome.vercel.app/fixture?representation=static",
-  sourceMode: "controlled-fixture",
-  collectorId: "collector-creation-in-progress",
-  snapshotId: "fixture-preview",
-  capturedAt: "2026-08-23T16:45:00.000Z",
-  states: [
-    {
-      id: "S01",
-      sequence: 1,
-      label: "INSCRIPTION",
-      elapsedMs: 0,
-      url: "https://experience-genome.vercel.app/fixture?representation=static",
-      heading: "A world can be read before it is understood.",
-      textExcerpt: "The semantic signal is present, but the experience is dormant.",
-      signals: [
-        { key: "semantic_reveal", value: "hidden", provenance: "dom" },
-        { key: "world_depth", value: "0", provenance: "visual" },
-        { key: "ambient_light", value: "82%", provenance: "visual" },
-      ],
-    },
-    {
-      id: "S02",
-      sequence: 2,
-      label: "APPROACH",
-      elapsedMs: 1200,
-      url: "https://experience-genome.vercel.app/fixture?representation=static",
-      heading: "The world approaches first.",
-      textExcerpt: "Spatial movement establishes scale before language arrives.",
-      signals: [
-        { key: "semantic_reveal", value: "hidden", provenance: "dom" },
-        { key: "world_depth", value: "-4.2", provenance: "visual" },
-        { key: "ambient_light", value: "44%", provenance: "visual" },
-      ],
-    },
-    {
-      id: "S03",
-      sequence: 3,
-      label: "SEMANTIC REVEAL",
-      elapsedMs: 1440,
-      url: "https://experience-genome.vercel.app/fixture?representation=static",
-      heading: "Meaning arrives after scale.",
-      textExcerpt: "Only after the spatial event settles does the label become readable.",
-      signals: [
-        { key: "semantic_reveal", value: "visible", provenance: "dom" },
-        { key: "world_depth", value: "-4.2", provenance: "visual" },
-        { key: "ambient_light", value: "44%", provenance: "visual" },
-      ],
-    },
-  ],
-  actions: [
-    {
-      id: "A01",
-      fromState: "S01",
-      toState: "S02",
-      type: "scroll",
-      label: "scroll +410px",
-      durationMs: 1200,
-      actor: "fixture",
-    },
-    {
-      id: "A02",
-      fromState: "S02",
-      toState: "S03",
-      type: "wait",
-      label: "wait 240ms",
-      durationMs: 240,
-      actor: "fixture",
-    },
-  ],
-  deltas: [
-    {
-      id: "D01",
-      fromState: "S01",
-      toState: "S02",
-      summary: "Depth advances and light falls while language remains withheld.",
-      kind: "observed-after-action",
-      changedSignals: ["world_depth", "ambient_light"],
-    },
-    {
-      id: "D02",
-      fromState: "S02",
-      toState: "S03",
-      summary: "The semantic label appears only after the spatial approach settles.",
-      kind: "mechanism-observed",
-      changedSignals: ["semantic_reveal"],
-    },
-  ],
-};
+export const demoTrace = normalizeFixtureReplay(driftBaselineReplay);
+export const realWebTrace = normalizeRealWebReplay(linearRealWebReplay);
 
 export const demoGenome: ExperienceGenome = {
   id: "genome-drift-lab",
@@ -107,7 +17,7 @@ export const demoGenome: ExperienceGenome = {
       referenceId: "ref-drift-lab",
       dimension: "motion",
       statement: "Spatial arrival precedes semantic reveal.",
-      interpretation: "The visual event establishes scale before asking the user to read.",
+      interpretation: "The controlled state order establishes approach before asking the user to read.",
       epistemicBasis: "observed",
       humanJudgment: "preferred",
       humanNote: "Keep the heavy, patient feeling of the reveal.",
@@ -116,13 +26,13 @@ export const demoGenome: ExperienceGenome = {
     {
       id: "C02",
       referenceId: "ref-drift-lab",
-      dimension: "light",
-      statement: "Ambient light contracts during approach.",
-      interpretation: "Reduced peripheral light may focus attention on the arriving object.",
+      dimension: "affect",
+      statement: "Withholding the semantic phase until after approach may create anticipation.",
+      interpretation: "Anticipation is an inference from the recorded order, not a directly observed fact.",
       epistemicBasis: "inferred",
       humanJudgment: "preferred",
-      humanNote: "I like that it feels focused without becoming flashy.",
-      evidenceRefs: ["S01", "S02", "D01"],
+      humanNote: "I like that it feels patient without becoming slow.",
+      evidenceRefs: ["S01", "S02", "S03", "D01", "D02"],
     },
     {
       id: "C03",
@@ -148,7 +58,7 @@ export const demoGenome: ExperienceGenome = {
     {
       dimension: "Form",
       status: "grounded",
-      reason: "DOM structure and viewport imagery agree.",
+      reason: "The Bright Data record preserves headings, excerpts, state labels, and section IDs.",
       claimRefs: ["C03"],
     },
     {
@@ -159,9 +69,9 @@ export const demoGenome: ExperienceGenome = {
     },
     {
       dimension: "Lighting intent",
-      status: "partial",
-      reason: "The visual change is observed; authorial intent is inferred.",
-      claimRefs: ["C02"],
+      status: "unresolved",
+      reason: "The bounded collector did not extract lighting measurements or authorial intent.",
+      claimRefs: [],
     },
     {
       dimension: "Pointer physics",
@@ -185,9 +95,9 @@ export const demoProjectGenome: ProjectGenome = {
   desiredAffect: ["anticipation", "weight", "lucid wonder"],
   generatedAt: "2026-08-23T16:47:00.000Z",
   model: {
-    provider: "openrouter",
-    id: "stealth/ox-alpha",
-    promptVersion: "genome-synthesis-v1",
+    provider: "verified-replay",
+    id: "curated-project-genome-v1",
+    promptVersion: "genome-synthesis-v1-replay",
   },
   rules: [
     {
@@ -202,13 +112,13 @@ export const demoProjectGenome: ProjectGenome = {
     },
     {
       id: "R02",
-      title: "Focused contraction",
-      rule: "Reduce peripheral luminance only during high-importance spatial transitions.",
+      title: "Rhythmic withholding",
+      rule: "Withhold secondary labels only during high-importance spatial transitions.",
       transformation: "mutated",
       sourceClaimRefs: ["C02"],
-      rationale: "Keeps the focus mechanism but limits it to rare narrative beats.",
-      implementationDirective: "Animate ambient intensity down during the portal transition, then restore it gradually.",
-      antiCopyConstraint: "Derive a new palette and easing curve from the project brief.",
+      rationale: "Mutates the inferred anticipation mechanism into a bounded project rule.",
+      implementationDirective: "Reveal secondary labels after the focal object settles, then restore normal information density.",
+      antiCopyConstraint: "Derive new durations, easing, hierarchy, and spatial composition from the project brief.",
     },
     {
       id: "R03",
@@ -233,6 +143,80 @@ export const demoProjectGenome: ProjectGenome = {
   ],
 };
 
-export const demoTraces = [demoTrace];
-export const demoGenomes = [demoGenome];
+export const realWebGenome: ExperienceGenome = {
+  id: "genome-linear-real-web",
+  referenceId: "ref-linear-real-web",
+  name: "Linear public landing-page genome",
+  claims: [
+    {
+      id: "LC01",
+      referenceId: "ref-linear-real-web",
+      dimension: "interaction",
+      statement: "Successive scrolls traverse three semantically distinct page regions.",
+      interpretation: "The bounded capture establishes sequence, but not animation quality or scroll distance.",
+      epistemicBasis: "observed",
+      humanJudgment: "unreviewed",
+      evidenceRefs: ["LS01", "LA01", "LS02", "LA02", "LS03", "LD01", "LD02"],
+    },
+    {
+      id: "LC02",
+      referenceId: "ref-linear-real-web",
+      dimension: "semantics",
+      statement: "The page appears to distribute its product story across a long vertical narrative.",
+      interpretation: "This is an inference from region order and captured headings, not a measurement of reader attention.",
+      epistemicBasis: "inferred",
+      humanJudgment: "unreviewed",
+      evidenceRefs: ["LS01", "LS02", "LS03"],
+    },
+    {
+      id: "LC03",
+      referenceId: "ref-linear-real-web",
+      dimension: "motion",
+      statement: "Transition timing, easing, and visual continuity remain unknown.",
+      interpretation: "The collector observed navigation order but returned no reliable motion measurements.",
+      epistemicBasis: "unresolved",
+      humanJudgment: "neutral",
+      evidenceRefs: [],
+    },
+  ],
+  coverage: [
+    {
+      dimension: "Semantic sequence",
+      status: "grounded",
+      reason: "Three ordered public page regions and their prior actions were returned by Bright Data.",
+      claimRefs: ["LC01"],
+    },
+    {
+      dimension: "Narrative intent",
+      status: "partial",
+      reason: "Region order is observed; the intent assigned to that order is inferred.",
+      claimRefs: ["LC02"],
+    },
+    {
+      dimension: "Transition motion",
+      status: "unresolved",
+      reason: "No timing, easing, screenshots, or frame-level deltas were captured.",
+      claimRefs: ["LC03"],
+    },
+    {
+      dimension: "Pointer and audio response",
+      status: "unresolved",
+      reason: "The bounded run did not test hover, pointer physics, or audio.",
+      claimRefs: [],
+    },
+  ],
+};
 
+export const realWebProjectRule = {
+  id: "R05",
+  title: "Narrative depth markers",
+  rule: "Let each major scroll region advance one legible idea while preserving a visible sense of journey.",
+  transformation: "mutated" as const,
+  sourceClaimRefs: ["LC01"],
+  rationale: "Carries the selected vertical sequencing principle into a new, bounded narrative system.",
+  implementationDirective: "Assign every major viewport region one semantic milestone and expose progress without copying source layout or copy.",
+  antiCopyConstraint: "Invent new milestones, composition, pacing, typography, assets, and transitions for the destination project.",
+};
+
+export const demoTraces = [demoTrace, realWebTrace];
+export const demoGenomes = [demoGenome, realWebGenome];
