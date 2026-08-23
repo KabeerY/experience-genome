@@ -44,6 +44,22 @@ describe("enforceEvidenceProvenance", () => {
     });
   });
 
+  it.each(["suggesting", "indicating", "implying", "creating"])(
+    "downgrades observed claims containing the interpretive word %s",
+    (word) => {
+      const result = enforceEvidenceProvenance(
+        {
+          ...draft,
+          claims: [{ ...draft.claims[0], statement: `The fixed layer persists, ${word} narrative continuity.` }],
+        },
+        new Set([1, 2, 3]),
+        "Three ordered moments were captured.",
+      );
+
+      expect(result.claims[0]).toMatchObject({ epistemicBasis: "inferred", confidence: "medium" });
+    },
+  );
+
   it("replaces an interpretive top-level observation with grounded fallback text", () => {
     const result = enforceEvidenceProvenance(
       { ...draft, observation: "The composition likely creates anticipation." },

@@ -94,6 +94,7 @@ async function waitForLoadingScreen(page: Page) {
         });
         return visibleLoaders.length === 0;
       },
+      undefined,
       { timeout: 10_000 },
     )
     .catch(() => undefined);
@@ -130,6 +131,24 @@ async function captureViewport(cdp: CDPSession) {
     ),
   ]);
   return screenshotSchema.parse(payload).data;
+}
+
+async function settleAtScrollProgress(page: Page, targetProgress: number) {
+  const attempts = targetProgress === 0 ? 1 : 4;
+
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    await page.evaluate((progress) => {
+      const maxScroll = Math.max(0, document.documentElement.scrollHeight - innerHeight);
+      scrollTo({ top: maxScroll * progress, behavior: "instant" });
+    }, targetProgress);
+    await page.waitForTimeout(targetProgress === 0 ? 900 : 1_200);
+
+    const actualProgress = await page.evaluate(() => {
+      const maxScroll = Math.max(0, document.documentElement.scrollHeight - innerHeight);
+      return maxScroll ? Math.min(1, Math.max(0, window.scrollY / maxScroll)) : 0;
+    });
+    if (targetProgress === 0 || Math.abs(actualProgress - targetProgress) <= 0.08) return;
+  }
 }
 
 async function collectRenderedMoment(
@@ -223,11 +242,7 @@ export async function captureRenderedJourney(url: URL): Promise<RenderedJourney>
     const moments: RenderedMoment[] = [];
     let lastFrameError: unknown;
     for (const [index, position] of positions.entries()) {
-      await page.evaluate((progress) => {
-        const maxScroll = Math.max(0, document.documentElement.scrollHeight - innerHeight);
-        scrollTo({ top: maxScroll * progress, behavior: "instant" });
-      }, position);
-      await page.waitForTimeout(index === 0 ? 900 : 1_050);
+      await settleAtScrollProgress(page, position);
       try {
         moments.push(await collectRenderedMoment(page, cdp, index + 1, position));
       } catch (error) {

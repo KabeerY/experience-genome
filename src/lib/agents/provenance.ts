@@ -4,7 +4,7 @@ import type { evidenceInterpretationDraftSchema } from "@/lib/agents/schema";
 
 type InterpretationDraft = z.infer<typeof evidenceInterpretationDraftSchema>;
 
-const inferenceLanguage = /\b(?:suggests?|indicates?|implies?|may|might|probably|likely|appears?|seems?|intended|purpose|creates?)\b/i;
+const inferenceLanguage = /\b(?:suggest(?:s|ed|ing)?|indicat(?:e|es|ed|ing)|impl(?:y|ies|ied|ying)|may|might|probably|likely|appear(?:s|ed|ing)?|seem(?:s|ed|ing)?|intend(?:s|ed|ing)?|purpose|creat(?:e|es|ed|ing))\b/i;
 const SUMMARY_CHARACTER_LIMIT = 180;
 
 export function conciseEvidenceSummary(value: string, limit = SUMMARY_CHARACTER_LIMIT) {
