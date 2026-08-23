@@ -27,6 +27,22 @@ A judge can paste any public URL and use the real workflow:
 
 No login or prepared per-site response is required. A workshop session persists locally in IndexedDB so a browser refresh does not destroy captured evidence or human judgment.
 
+![Five-moment Bright Data experience trace](public/readme/live-evidence.png)
+
+_Fresh production run against `razorpay.com/foundation-model`: one structured trace plus five rendered browser states from the supplied URL._
+
+### Verified production path
+
+| Stage | Production proof |
+| --- | --- |
+| Input | arbitrary public URL entered in the deployed interface |
+| Perception | custom Bright Data collector + Scraping Browser at 0%, 25%, 50%, 75%, and deepest reachable scroll |
+| Interpretation | Fireworks-hosted Kimi K2.6, followed by deterministic evidence-citation checks |
+| Judgment | explicit human Keep/Reject choice and optional explanation |
+| Compilation | verified Project Genome + downloadable Experience Pack |
+
+The redacted [five-moment verification receipt](evidence/brightdata/razorpay-five-moment-verification.json) records the production source, evidence layers, sampled positions, model input mode, and verifier result without credentials or screenshot payloads.
+
 ## Why this is different
 
 A screenshot captures appearance. A DOM scrape captures symbols and structure. Neither establishes the ordered experience around them: what appeared after a scroll, what remained fixed, or what a particular human loved.
@@ -41,6 +57,10 @@ Experience Compiler keeps three truths distinct:
 
 That is why evidence basis and human judgment are separate fields. Something can be directly observed and still be disliked; something can be inferred and preferred.
 
+![Observed, inferred, and unresolved evidence lanes](public/readme/provenance.png)
+
+_The interface does not promote an inference into an observation, and it keeps missing continuous motion, easing, hover, audio, and implementation details visible as unknowns._
+
 ## Bright Data is the perception layer
 
 Bright Data is used twice in every complete live run:
@@ -51,6 +71,8 @@ Bright Data is used twice in every complete live run:
 If the rendered layer is unavailable, the interface says so and the model receives measurements only. It never labels a measurement-only run as visual input. If collection fails, no stored response is silently substituted.
 
 The separate [Drift Lab](https://experience-genome.vercel.app/lab/drift) is a controlled fixture for the repeatable break → same-collector heal → recover proof. It is deliberately separate from arbitrary live web capture.
+
+![Controlled same-collector healing proof](public/readme/drift-lab.png)
 
 Historical Bright Data artifacts, including failed attempts, the controlled recovery ledger, and a redacted five-moment production verification receipt, remain in [`evidence/brightdata`](evidence/brightdata).
 
@@ -114,6 +136,10 @@ Core stack:
 - Vercel for deployment; no database and no authentication are required
 
 ## Experience Pack
+
+![Compiled Project Genome and portable Experience Pack](public/readme/project-genome.png)
+
+_The source experience becomes attributed, transformed rules—not copied pixels. The compiled artifact can be copied as agent context or downloaded as a vendor-neutral pack._
 
 ```text
 experience-pack/
@@ -187,7 +213,7 @@ Submission helpers: [`docs/DEMO_SCRIPT.md`](docs/DEMO_SCRIPT.md) · [`docs/SUBMI
 ## Truth and anti-copy contract
 
 - Observations, inferences, human statements, and unresolved dimensions remain visibly distinct.
-- Three sampled frames do not establish frame-perfect timing, easing, hover physics, audio, or universal causation.
+- Five sampled frames do not establish frame-perfect timing, easing, hover physics, audio, authorial intent, or universal causation.
 - Every non-invented project rule must retain a judged source reference.
 - Invented rules cite no source evidence.
 - Outputs prohibit reusing source assets, copy, layout, geometry, exact timing, camera paths, or brand language.
