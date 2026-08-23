@@ -1,10 +1,11 @@
 import "server-only";
 
-import { chromium, type Browser, type Page } from "playwright-core";
+import { chromium, type Browser, type CDPSession, type Page } from "playwright-core";
 import { z } from "zod";
 
 const statusSchema = z.object({ customer: z.string().min(1) });
 const passwordSchema = z.object({ passwords: z.array(z.string().min(1)).min(1) });
+const screenshotSchema = z.object({ data: z.string().min(20) });
 
 export type RenderedMoment = {
   order: number;
@@ -98,7 +99,42 @@ async function waitForLoadingScreen(page: Page) {
     .catch(() => undefined);
 }
 
-async function collectRenderedMoment(page: Page, order: number, scrollProgress: number): Promise<RenderedMoment> {
+async function enterInteractiveExperience(page: Page) {
+  const gate = page
+    .getByRole("button", {
+      name: /(?:enter|begin|launch|explore|start).{0,48}(?:experience|journey|story|world)|click to enter/i,
+    })
+    .first();
+
+  if ((await gate.count()) === 0 || !(await gate.isVisible())) return false;
+
+  await gate.click({ timeout: 3_000 });
+  await page.waitForTimeout(1_500);
+  await waitForLoadingScreen(page);
+  return true;
+}
+
+async function captureViewport(cdp: CDPSession) {
+  const payload = await Promise.race([
+    cdp.send("Page.captureScreenshot", {
+      format: "jpeg",
+      quality: 54,
+      fromSurface: true,
+      captureBeyondViewport: false,
+    }),
+    new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error("Direct viewport capture timed out.")), 10_000),
+    ),
+  ]);
+  return screenshotSchema.parse(payload).data;
+}
+
+async function collectRenderedMoment(
+  page: Page,
+  cdp: CDPSession,
+  order: number,
+  scrollProgress: number,
+): Promise<RenderedMoment> {
   const measured = await page.evaluate(() => {
     const visible = (element: Element) => {
       const rect = element.getBoundingClientRect();
@@ -134,17 +170,11 @@ async function collectRenderedMoment(page: Page, order: number, scrollProgress: 
       transformedElements,
     };
   });
-  const screenshot = await page.screenshot({
-    type: "jpeg",
-    quality: 54,
-    animations: "disabled",
-    caret: "hide",
-    timeout: 15_000,
-  });
+  const screenshotBase64 = await captureViewport(cdp);
 
   return {
     order,
-    imageDataUrl: `data:image/jpeg;base64,${screenshot.toString("base64")}`,
+    imageDataUrl: `data:image/jpeg;base64,${screenshotBase64}`,
     scrollY: measured.scrollY,
     scrollProgress: Number.isFinite(measured.actualProgress) ? measured.actualProgress : scrollProgress,
     viewport: measured.viewport,
@@ -163,6 +193,7 @@ export async function captureRenderedJourney(url: URL): Promise<RenderedJourney>
 
   const endpoint = await getBrowserEndpoint(apiToken, zone);
   let browser: Browser | null = null;
+  let cdp: CDPSession | null = null;
 
   try {
     browser = await connectToRenderedBrowser(endpoint);
@@ -182,6 +213,8 @@ export async function captureRenderedJourney(url: URL): Promise<RenderedJourney>
     ]).catch(() => undefined);
     await waitForLoadingScreen(page);
     await page.waitForTimeout(750);
+    await enterInteractiveExperience(page).catch(() => false);
+    cdp = await context.newCDPSession(page);
 
     const positions = [0, 0.5, 0.92];
     const moments: RenderedMoment[] = [];
@@ -191,11 +224,12 @@ export async function captureRenderedJourney(url: URL): Promise<RenderedJourney>
         scrollTo({ top: maxScroll * progress, behavior: "instant" });
       }, position);
       await page.waitForTimeout(index === 0 ? 450 : 1_050);
-      moments.push(await collectRenderedMoment(page, index + 1, position));
+      moments.push(await collectRenderedMoment(page, cdp, index + 1, position));
     }
 
     return { moments };
   } finally {
+    await cdp?.detach().catch(() => undefined);
     await browser?.close().catch(() => undefined);
   }
 }
