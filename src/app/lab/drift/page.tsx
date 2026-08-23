@@ -1,0 +1,101 @@
+import type { Metadata } from "next";
+import { ArrowRight, Check, CircleDashed, ExternalLink, RefreshCw, ShieldCheck, TriangleAlert } from "lucide-react";
+import Link from "next/link";
+
+import styles from "./drift.module.css";
+
+export const metadata: Metadata = {
+  title: "Drift Lab — Same-ID Healing",
+  description: "A controlled, public and repeatable Bright Data self-healing proof.",
+};
+
+const collectorId = "PENDING_FIRST_VERIFIED_RUN";
+
+export default function DriftLabPage() {
+  return (
+    <main className={styles.lab}>
+      <header className={styles.header}>
+        <Link href="/studio">EXPERIENCE//COMPILER</Link>
+        <span>CONTROLLED RELIABILITY PROOF</span>
+        <Link href="/">Story ↗</Link>
+      </header>
+
+      <section className={styles.hero}>
+        <div>
+          <span>DRIFT LAB / SAME-COLLECTOR-ID</span>
+          <h1>Break it clearly.<br /><em>Heal it honestly.</em></h1>
+          <p>
+            A public synthetic fixture isolates schema drift from the real-web product demo. The
+            content contract stays fixed while the DOM representation changes underneath it.
+          </p>
+        </div>
+        <aside>
+          <span>BRIGHT DATA BUDGET POLICY</span>
+          <strong>Replay by default</strong>
+          <p>No live run is triggered by this public interface. Verified job artifacts are persisted after capture.</p>
+        </aside>
+      </section>
+
+      <section className={styles.sequence}>
+        <article data-stage="baseline">
+          <header><span>01 / BASELINE</span><Check size={16} /></header>
+          <div className={styles.stageVisual}><i /><i /><i /></div>
+          <h2>Known structure</h2>
+          <p>The collector reads three state records from stable baseline selectors.</p>
+          <dl>
+            <div><dt>Fixture</dt><dd>baseline-v1</dd></div>
+            <div><dt>Expected</dt><dd>3 records</dd></div>
+            <div><dt>Capture</dt><dd>not run yet</dd></div>
+          </dl>
+          <Link href="/fixture?representation=baseline">Open baseline <ExternalLink size={13} /></Link>
+        </article>
+
+        <div className={styles.connector}><ArrowRight size={18} /><span>DOM MUTATION</span></div>
+
+        <article data-stage="broken">
+          <header><span>02 / BREAK</span><TriangleAlert size={16} /></header>
+          <div className={`${styles.stageVisual} ${styles.brokenVisual}`}><i /><i /><i /></div>
+          <h2>Same meaning, moved structure</h2>
+          <p>The visible experience remains, but the original selector contract no longer resolves.</p>
+          <dl>
+            <div><dt>Fixture</dt><dd>shifted-v2</dd></div>
+            <div><dt>Expected</dt><dd>old path fails</dd></div>
+            <div><dt>Capture</dt><dd>not run yet</dd></div>
+          </dl>
+          <Link href="/fixture?representation=shifted">Open mutation <ExternalLink size={13} /></Link>
+        </article>
+
+        <div className={styles.connector}><ArrowRight size={18} /><span>SELF-HEAL</span></div>
+
+        <article data-stage="healed">
+          <header><span>03 / RECOVER</span><RefreshCw size={16} /></header>
+          <div className={`${styles.stageVisual} ${styles.healedVisual}`}><i /><i /><i /></div>
+          <h2>Recover the contract</h2>
+          <p>Bright Data refactors the development version; the same collector ID returns the three records again.</p>
+          <dl>
+            <div><dt>Collector</dt><dd>{collectorId}</dd></div>
+            <div><dt>Required</dt><dd>same c_*</dd></div>
+            <div><dt>Status</dt><dd>proof pending</dd></div>
+          </dl>
+          <span className={styles.pending}><CircleDashed size={13} /> Awaiting bounded live proof</span>
+        </article>
+      </section>
+
+      <section className={styles.truthPanel}>
+        <div><ShieldCheck size={21} /><span>WHAT THIS PROVES</span></div>
+        <p>Repeatable resilience to a controlled representation change while preserving one output contract.</p>
+        <div><TriangleAlert size={21} /><span>WHAT IT DOES NOT PROVE</span></div>
+        <p>Universal recovery from every arbitrary website change. The real-web observer is evaluated separately.</p>
+      </section>
+
+      <section className={styles.proofLedger}>
+        <header><span>PROOF LEDGER</span><strong>TRUTHFUL UNTIL CAPTURED</strong></header>
+        <div><span>Collector creation</span><em>pending</em><code>c_* will appear here</code></div>
+        <div><span>Baseline job</span><em>pending</em><code>j_* / 3 records</code></div>
+        <div><span>Broken job</span><em>pending</em><code>j_* / expected failure</code></div>
+        <div><span>Heal operation</span><em>pending</em><code>refactor_template / same c_*</code></div>
+        <div><span>Recovery job</span><em>pending</em><code>j_* / 3 records</code></div>
+      </section>
+    </main>
+  );
+}

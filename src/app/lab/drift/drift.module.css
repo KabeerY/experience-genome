@@ -1,0 +1,104 @@
+.lab {
+  --line: rgba(225, 208, 158, 0.14);
+  --bone: #eae3d2;
+  min-height: 100vh;
+  padding-bottom: 90px;
+  color: var(--bone);
+  background:
+    radial-gradient(circle at 70% 10%, rgba(173, 132, 60, 0.08), transparent 32%),
+    #080908;
+}
+
+.header {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  height: 66px;
+  padding: 0 30px;
+  border-bottom: 1px solid var(--line);
+  color: #8c8980;
+  font: 9px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.14em;
+}
+.header span { color: #5e5f59; }
+.header a:last-child { justify-self: end; }
+
+.hero {
+  display: grid;
+  grid-template-columns: 1.5fr 0.7fr;
+  gap: 100px;
+  align-items: end;
+  max-width: 1250px;
+  margin: 0 auto;
+  padding: 105px 35px 85px;
+}
+.hero > div > span, .hero aside > span { color: #b39a5c; font: 9px/1 var(--font-geist-mono), monospace; letter-spacing: 0.18em; }
+.hero h1 { margin: 22px 0 25px; font: 400 clamp(57px, 7vw, 108px)/0.88 Georgia, serif; letter-spacing: -0.06em; }
+.hero h1 em { color: #d5bd78; font-weight: 400; }
+.hero > div > p { max-width: 650px; color: #9c988d; font-size: 14px; line-height: 1.75; }
+.hero aside { padding: 26px; border: 1px solid var(--line); background: rgba(12, 13, 12, 0.76); }
+.hero aside strong { display: block; margin: 22px 0 9px; font: 400 26px/1 Georgia, serif; }
+.hero aside p { margin: 0; color: #817f77; font-size: 11px; line-height: 1.6; }
+
+.sequence {
+  display: grid;
+  grid-template-columns: 1fr 70px 1fr 70px 1fr;
+  align-items: center;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 30px;
+}
+.sequence > article { min-height: 540px; padding: 28px; border: 1px solid var(--line); background: #0b0c0b; }
+.sequence > article > header { display: flex; justify-content: space-between; color: #77766f; font: 9px/1 var(--font-geist-mono), monospace; letter-spacing: 0.13em; }
+.sequence article[data-stage="baseline"] header svg { color: #6dc69b; }
+.sequence article[data-stage="broken"] header svg { color: #db7042; }
+.sequence article[data-stage="healed"] header svg { color: #d1b76f; }
+.stageVisual { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; height: 135px; margin: 50px 0 35px; padding: 16px; border: 1px solid rgba(255, 255, 255, 0.06); background: #080908; }
+.stageVisual i { position: relative; display: block; border: 1px solid rgba(98, 149, 222, 0.35); background: linear-gradient(180deg, rgba(65, 104, 178, 0.17), transparent); }
+.stageVisual i::after { position: absolute; left: 10px; right: 10px; bottom: 13px; height: 1px; content: ""; background: #5576ba; box-shadow: 0 -17px #26365a, 0 -34px #1b2540; }
+.brokenVisual i { border-color: rgba(225, 99, 47, 0.3); transform: translateY(var(--shift, 9px)) rotate(var(--angle, -3deg)); }
+.brokenVisual i:nth-child(2) { --shift: -6px; --angle: 4deg; }
+.brokenVisual i:nth-child(3) { --shift: 13px; --angle: -6deg; }
+.brokenVisual i::after { background: #c55a32; box-shadow: 0 -17px #54291d, 0 -34px #321d18; }
+.healedVisual i { border-color: rgba(214, 187, 111, 0.42); background: linear-gradient(180deg, rgba(183, 148, 69, 0.15), transparent); }
+.healedVisual i::after { background: #c4a55d; box-shadow: 0 -17px #4c4228, 0 -34px #2c281c; }
+.sequence h2 { min-height: 66px; margin: 0 0 14px; font: 400 30px/1.05 Georgia, serif; }
+.sequence article > p { min-height: 72px; color: #8a877e; font-size: 12px; line-height: 1.65; }
+.sequence dl { margin: 30px 0 25px; border-top: 1px solid var(--line); }
+.sequence dl div { display: flex; justify-content: space-between; padding: 11px 0; border-bottom: 1px solid var(--line); font: 8px/1 var(--font-geist-mono), monospace; text-transform: uppercase; letter-spacing: 0.1em; }
+.sequence dt { color: #5f605a; }
+.sequence dd { margin: 0; color: #96928a; }
+.sequence article > a, .pending { display: flex; align-items: center; gap: 8px; color: #b8a66f; font: 8px/1 var(--font-geist-mono), monospace; letter-spacing: 0.11em; text-transform: uppercase; }
+.pending { color: #726f66; }
+.connector { display: grid; justify-items: center; gap: 12px; color: #76694b; }
+.connector span { writing-mode: vertical-rl; color: #5c5b55; font: 7px/1 var(--font-geist-mono), monospace; letter-spacing: 0.16em; }
+
+.truthPanel { display: grid; grid-template-columns: auto 1fr auto 1fr; gap: 24px; align-items: center; max-width: 1220px; margin: 75px auto 0; padding: 28px; border: 1px solid var(--line); background: rgba(11, 12, 11, 0.75); }
+.truthPanel > div { display: flex; align-items: center; gap: 10px; color: #79bc99; font: 8px/1 var(--font-geist-mono), monospace; letter-spacing: 0.12em; }
+.truthPanel > div:nth-of-type(2) { color: #d06b41; }
+.truthPanel p { margin: 0; color: #85827a; font-size: 11px; line-height: 1.55; }
+
+.proofLedger { max-width: 1220px; margin: 30px auto 0; border: 1px solid var(--line); }
+.proofLedger header, .proofLedger > div { display: grid; grid-template-columns: 1fr auto 1.2fr; align-items: center; min-height: 48px; padding: 0 18px; border-bottom: 1px solid var(--line); font: 8px/1 var(--font-geist-mono), monospace; letter-spacing: 0.11em; }
+.proofLedger header { color: #b49d61; }
+.proofLedger header strong { grid-column: 3; justify-self: end; color: #5c5d57; font-weight: 500; }
+.proofLedger > div > span { color: #8b8981; }
+.proofLedger em { padding: 6px 8px; color: #d4a16f; border: 1px solid rgba(212, 161, 111, 0.2); font-style: normal; }
+.proofLedger code { justify-self: end; color: #63645e; }
+
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; gap: 45px; }
+  .sequence { grid-template-columns: 1fr; gap: 16px; }
+  .connector { transform: rotate(90deg); }
+  .connector span { display: none; }
+  .truthPanel { grid-template-columns: 1fr; margin-inline: 30px; }
+  .proofLedger { margin-inline: 30px; }
+}
+
+@media (max-width: 600px) {
+  .header { grid-template-columns: 1fr auto; }
+  .header span { display: none; }
+  .sequence > article { min-height: 0; }
+  .proofLedger header, .proofLedger > div { grid-template-columns: 1fr auto; gap: 8px; padding-block: 14px; }
+  .proofLedger code, .proofLedger header strong { grid-column: 1 / -1; justify-self: start; }
+}
