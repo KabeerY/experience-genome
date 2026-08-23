@@ -1,8 +1,9 @@
+import JSZip from "jszip";
 import { describe, expect, it } from "vitest";
 
 import type { LiveCapture } from "@/lib/capture/public-contract";
 
-import { buildSessionPackFiles, compileSessionGenome } from "./session-pack";
+import { buildSessionPackFiles, buildSessionPackZip, compileSessionGenome } from "./session-pack";
 
 const capture: LiveCapture = {
   version: "live-capture@1",
@@ -110,5 +111,27 @@ describe("session compiler", () => {
     expect(evidence?.content).toContain("screenshotFile");
     expect(evidence?.content).not.toContain("data:image/jpeg");
     expect(screenshot).toMatchObject({ base64: true, content: "/9j/2Q==" });
+  });
+
+  it("builds a readable ZIP containing the portable agent adapters and evidence", async () => {
+    const judgedReference = {
+      capture,
+      decision: { judgment: "preferred" as const, rule: "Preserve staged revelation." },
+    };
+    const project = compileSessionGenome({
+      title: "New World",
+      brief: "Build an original experience.",
+      desiredAffect: ["wonder"],
+      references: [judgedReference],
+    });
+    const bytes = await buildSessionPackZip(project, [judgedReference]).generateAsync({ type: "uint8array" });
+    const archive = await JSZip.loadAsync(bytes);
+
+    expect(archive.file("genome/PROJECT_GENOME.json")).not.toBeNull();
+    expect(archive.file("genome/EVIDENCE.json")).not.toBeNull();
+    expect(archive.file("agents/AGENTS.md")).not.toBeNull();
+    expect(archive.file("agents/CLAUDE.md")).not.toBeNull();
+    expect(archive.file("agents/GEMINI.md")).not.toBeNull();
+    expect(archive.file("evidence/01-living-reference-moment-1.jpg")).not.toBeNull();
   });
 });

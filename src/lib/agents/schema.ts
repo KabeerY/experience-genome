@@ -35,6 +35,7 @@ export const evidenceInterpretationSchema = evidenceInterpretationDraftSchema.ex
     provider: z.string().min(1),
     model: z.string().min(1),
     promptVersion: z.literal("evidence-interpreter-v1"),
+    inputMode: z.enum(["rendered-multimodal", "rendered-measurements"]),
   }),
   verification: z.object({
     status: z.literal("passed"),

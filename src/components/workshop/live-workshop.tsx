@@ -79,6 +79,21 @@ function stageLabel(order: number, total: number) {
   return "Next observed moment";
 }
 
+function modelLabel(model?: string, provider?: string) {
+  if (!model) return "Verified model agent";
+  const id = model.split("/").at(-1) ?? model;
+  const names: Record<string, string> = {
+    "kimi-k2p6": "Kimi K2.6",
+    "kimi-k2p5": "Kimi K2.5",
+    "qwen3p7-plus": "Qwen 3.7 Plus",
+    "qwen3-vl-30b-a3b-instruct": "Qwen3 VL 30B",
+    "ox-alpha": "OX Alpha",
+  };
+  const readable = names[id] ?? id.replaceAll("-", " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+  const providerName = provider === "fireworks" ? "Fireworks" : provider === "openrouter" ? "OpenRouter" : provider;
+  return providerName ? `${readable} via ${providerName}` : readable;
+}
+
 export function LiveWorkshop() {
   const urlInput = useRef<HTMLInputElement>(null);
   const evidenceRegion = useRef<HTMLDivElement>(null);
@@ -186,7 +201,7 @@ export function LiveWorkshop() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ capture }),
-        signal: AbortSignal.timeout(90_000),
+        signal: AbortSignal.timeout(115_000),
       });
       const payload: unknown = await response.json();
       if (!response.ok) {
@@ -319,7 +334,7 @@ export function LiveWorkshop() {
             interpretation,
           })),
         }),
-        signal: AbortSignal.timeout(90_000),
+        signal: AbortSignal.timeout(115_000),
       });
       const payload: unknown = await response.json();
       if (!response.ok) {
@@ -604,11 +619,13 @@ export function LiveWorkshop() {
                 <div>
                   <small>EVIDENCE INTERPRETER</small>
                   {activeReference.interpretationStatus === "thinking" ? (
-                    <><strong>Reasoning across the trace and rendered frames…</strong><p>The live evidence is already safe; this agent is separating observation, inference, and unknowns.</p></>
+                    <><strong>Reasoning across the trace and rendered measurements…</strong><p>The live evidence is already safe; this agent is separating observation, inference, and unknowns.</p></>
                   ) : activeReference.interpretationStatus === "ready" ? (
                     <>
                       <strong>Interpretation complete · provenance checks passed</strong>
-                      <p>{activeInterpretation?.agent.model} produced the reading below; deterministic checks verified every observed citation.</p>
+                      <p>
+                        {modelLabel(activeInterpretation?.agent.model, activeInterpretation?.agent.provider)} read the {activeInterpretation?.agent.inputMode === "rendered-multimodal" ? "rendered contact sheet" : "rendered measurements"}; deterministic checks verified every observed citation.
+                      </p>
                     </>
                   ) : (
                     <><strong>Agent interpretation unavailable</strong><p>{activeReference.interpretationError} The grounded first-pass reading remains below.</p></>
@@ -617,6 +634,11 @@ export function LiveWorkshop() {
                 {activeReference.interpretationStatus === "error" && (
                   <button onClick={() => void requestInterpretation(activeReference.key, activeReference.capture)} type="button">
                     <RotateCcw size={14} /> Retry interpreter
+                  </button>
+                )}
+                {activeReference.interpretationStatus === "ready" && (
+                  <button onClick={() => void requestInterpretation(activeReference.key, activeReference.capture)} type="button">
+                    <RotateCcw size={14} /> Re-run analysis
                   </button>
                 )}
               </section>
@@ -754,7 +776,7 @@ export function LiveWorkshop() {
           <header>
             <div>
               <span>
-                PROJECT GENOME COMPILED · {project.compiler.mode === "agent" ? `${project.compiler.model} + PROVENANCE VERIFIER` : "LOCAL COMPILER + PROVENANCE VERIFIER"}
+                PROJECT GENOME COMPILED · {project.compiler.mode === "agent" ? `${modelLabel(project.compiler.model, project.compiler.provider)} + PROVENANCE VERIFIER` : "LOCAL COMPILER + PROVENANCE VERIFIER"}
               </span>
               <h3>{project.title}</h3><p>{project.brief}</p>
             </div>

@@ -105,6 +105,14 @@ function cleanText(value: string | null | undefined) {
   return cleaned || undefined;
 }
 
+function safeRenderedFailure(error: unknown) {
+  if (!(error instanceof Error)) return "Unknown rendered-browser failure.";
+  return error.message
+    .replace(/wss:\/\/[^@\s]+@/gi, "wss://[credentials-redacted]@")
+    .replace(/brd-customer-[^-\s]+/gi, "brd-customer-[redacted]")
+    .slice(0, 500);
+}
+
 function normalizeCapture(
   raw: unknown,
   requestedUrl: URL,
@@ -294,7 +302,10 @@ export async function capturePublicExperience(input: {
     brightDataResponseSchema.parse(payload);
     // Bright Data accounts may serialize collector and Browser API work. Start
     // the rendered pass only after the structured collector has released.
-    const renderedJourney = await captureRenderedJourney(requestedUrl).catch(() => undefined);
+    const renderedJourney = await captureRenderedJourney(requestedUrl).catch((error) => {
+      console.error(`[capture] Rendered browser layer failed: ${safeRenderedFailure(error)}`);
+      return undefined;
+    });
     return normalizeCapture(payload, requestedUrl, input.intent, startedAt, renderedJourney);
   } catch (error) {
     if (error instanceof LiveCaptureError) throw error;

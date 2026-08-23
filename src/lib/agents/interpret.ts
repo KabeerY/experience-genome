@@ -1,5 +1,6 @@
 import "server-only";
 
+import { buildOrderedContactSheet } from "@/lib/agents/contact-sheet";
 import { evidenceInterpretationDraftSchema, evidenceInterpretationSchema } from "@/lib/agents/schema";
 import { liveCaptureSchema, type LiveCapture } from "@/lib/capture/public-contract";
 import { generateStructured, getModelIdentity } from "@/lib/model/provider";
@@ -33,11 +34,18 @@ function interpretationInput(capture: LiveCapture) {
 export async function interpretCapture(rawCapture: unknown) {
   const capture = liveCaptureSchema.parse(rawCapture);
   const validMoments = new Set(capture.moments.map((moment) => moment.order));
-  const identity = getModelIdentity();
+  const interpreterModelId = process.env.VISION_MODEL_ID;
+  const enableVision = process.env.INTERPRETER_ENABLE_VISION === "true";
+  const identity = getModelIdentity(interpreterModelId);
+  const contactSheet = enableVision ? await buildOrderedContactSheet(capture) : [];
+  const hasRenderedInput = contactSheet.length > 0;
   const draft = await generateStructured({
     schema: evidenceInterpretationDraftSchema,
     schemaName: "evidence_interpretation",
-    images: capture.moments.flatMap((moment) => (moment.visual ? [moment.visual.imageDataUrl] : [])),
+    images: hasRenderedInput ? contactSheet : undefined,
+    modelId: interpreterModelId,
+    maxTokens: 2_600,
+    reasoningEffort: "minimal",
     system: [
       "You are the Evidence Interpreter inside Experience Compiler.",
       "Analyze one bounded web journey using structured state/action/state evidence and ordered rendered frames.",
@@ -46,18 +54,27 @@ export async function interpretCapture(rawCapture: unknown) {
       "Never claim exact easing, continuous timing, hover physics, audio behavior, authorial intent, or causality unless supplied evidence establishes it.",
       "Observed claims must cite at least one valid moment number. Inferred claims may cite supporting moments but must use calibrated language.",
       "Create an abstract reusable experience rule, never a request to copy source assets, wording, composition, geometry, branding, or exact motion.",
-      "Write for a product designer: specific, plain, concise, and useful.",
+      "Write for a product designer: specific, plain, concise, and useful. Keep each top-level summary under 280 characters and the candidate rule under 260 characters.",
     ].join(" "),
     prompt: JSON.stringify({
       task: "Interpret this live web experience and produce provenance-safe claims.",
-      orderedFrames: "Images are attached in the same order as rendered moments in the JSON.",
+      renderedInput: hasRenderedInput
+        ? "One compact contact sheet is attached. Read its labeled frames from left to right."
+        : "Pixel frames remain human-visible and exportable. Your input contains the browser-measured properties and visible headings from each frame, not the pixels themselves.",
       capture: interpretationInput(capture),
     }),
     validate: (value) => {
       const issues: string[] = [];
+      const inferenceLanguage = /\b(?:suggests?|indicates?|implies?|may|might|probably|likely|appears?|seems?|intended|purpose|creates?)\b/i;
+      if (inferenceLanguage.test(value.observation)) {
+        issues.push("The observation summary contains interpretive language; move that language to inference.");
+      }
       for (const claim of value.claims) {
         if (claim.epistemicBasis === "observed" && claim.evidenceMoments.length === 0) {
           issues.push(`Observed claim “${claim.title}” has no evidence moments.`);
+        }
+        if (claim.epistemicBasis === "observed" && inferenceLanguage.test(claim.statement)) {
+          issues.push(`Observed claim “${claim.title}” contains interpretive language.`);
         }
         for (const moment of claim.evidenceMoments) {
           if (!validMoments.has(moment)) issues.push(`Claim “${claim.title}” cites unknown moment ${moment}.`);
@@ -75,6 +92,7 @@ export async function interpretCapture(rawCapture: unknown) {
       provider: identity.provider,
       model: identity.id,
       promptVersion: "evidence-interpreter-v1",
+      inputMode: hasRenderedInput ? "rendered-multimodal" : "rendered-measurements",
     },
     verification: {
       status: "passed",

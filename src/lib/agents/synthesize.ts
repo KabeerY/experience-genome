@@ -26,7 +26,8 @@ const synthesisInputSchema = z.object({
 
 export async function synthesizeJudgedProject(rawInput: unknown): Promise<PortableProjectGenome> {
   const input = synthesisInputSchema.parse(rawInput);
-  const identity = getModelIdentity();
+  const synthesisModelId = process.env.SYNTHESIS_MODEL_ID;
+  const identity = getModelIdentity(synthesisModelId);
   const references = input.references.map((reference, index) => ({
     key: `reference-${index + 1}`,
     source: reference.capture.source,
@@ -44,11 +45,17 @@ export async function synthesizeJudgedProject(rawInput: unknown): Promise<Portab
   const draft = await generateStructured({
     schema: projectSynthesisDraftSchema,
     schemaName: "project_genome_synthesis",
+    modelId: synthesisModelId,
+    maxTokens: 3_400,
+    reasoningEffort: "minimal",
     system: [
       "You are the Genome Synthesizer inside Experience Compiler.",
       "Transform evidence-backed experience principles plus explicit human judgment into an original Project Genome.",
-      "Preferred references may support inherited or mutated rules. Rejected references may support rejected rules only.",
+      "Preferred references may support inherited or mutated rules. Every inherited or mutated rule MUST contain at least one exact preferred reference key in sourceReferences.",
+      "Rejected references may support rejected rules only. Every rejected rule MUST contain at least one exact rejected reference key in sourceReferences.",
       "Invented rules must cite no source references and must be genuinely project-specific rather than an average of inputs.",
+      "Every judged reference key must appear in at least one rule. Produce at least one invented rule whenever any preferred reference exists.",
+      "Prefer 5 to 7 high-signal rules for a one-reference project. Merge overlapping ideas instead of flooding the user with near-duplicates.",
       "Never reproduce source copy, assets, layout, geometry, exact timing, camera paths, branded visual language, or interaction choreography.",
       "Preserve uncertainty. Do not solve unresolved evidence by pretending it was observed.",
       "Implementation directives should be concrete enough for a coding agent but must leave creative degrees of freedom.",
@@ -61,6 +68,21 @@ export async function synthesizeJudgedProject(rawInput: unknown): Promise<Portab
         desiredAffect: input.desiredAffect,
       },
       references,
+      ruleContract: {
+        validReferenceKeys: references.map((reference) => reference.key),
+        preferredReferenceKeys: references
+          .filter((reference) => reference.humanJudgment.judgment === "preferred")
+          .map((reference) => reference.key),
+        rejectedReferenceKeys: references
+          .filter((reference) => reference.humanJudgment.judgment === "rejected")
+          .map((reference) => reference.key),
+        transformations: {
+          inherited: "sourceReferences must contain one or more preferredReferenceKeys",
+          mutated: "sourceReferences must contain one or more preferredReferenceKeys",
+          rejected: "sourceReferences must contain one or more rejectedReferenceKeys",
+          invented: "sourceReferences must be an empty array",
+        },
+      },
     }),
     validate: (value) => {
       const issues: string[] = [];

@@ -262,14 +262,18 @@ export function buildSessionPackFiles(project: PortableProjectGenome, references
   return [...files, ...screenshotFiles];
 }
 
-export async function downloadSessionPack(project: PortableProjectGenome, references: JudgedReference[]) {
+export function buildSessionPackZip(project: PortableProjectGenome, references: JudgedReference[]) {
   const zip = new JSZip();
   const files = buildSessionPackFiles(project, references);
   files.forEach((file) => {
     if (file.base64) zip.file(file.path, file.content, { base64: true });
     else zip.file(file.path, file.content);
   });
+  return zip;
+}
 
+export async function downloadSessionPack(project: PortableProjectGenome, references: JudgedReference[]) {
+  const zip = buildSessionPackZip(project, references);
   const blob = await zip.generateAsync({ type: "blob" });
   const objectUrl = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
