@@ -233,7 +233,7 @@
 .liveBadge i { width: 8px; height: 8px; border: 2px solid #fff; border-radius: 50%; background: #4e9860; box-shadow: 0 0 0 3px #dcedd8; }
 .evidenceHeader h3 { margin: 10px 0 6px; font: 590 clamp(30px, 3.6vw, 50px)/.98 var(--font-story-serif), Georgia, serif; letter-spacing: -.04em; }
 .evidenceHeader a { display: inline-flex; align-items: center; gap: 6px; color: #6f817b; font-size: 11px; }
-.captureReceipt { display: flex; flex: 0 0 auto; align-items: center; gap: 10px; padding: 12px 14px; border: 1px solid rgba(67,129,90,.2); border-radius: 12px; color: #3c7752; background: #edf5e8; }
+.captureReceipt { display: flex; max-width: 360px; flex: 0 0 auto; align-items: center; gap: 10px; padding: 12px 14px; border: 1px solid rgba(67,129,90,.2); border-radius: 12px; color: #3c7752; background: #edf5e8; }
 .captureReceipt > span { display: grid; gap: 4px; }
 .captureReceipt small { font: 800 7px/1 var(--font-geist-mono), monospace; letter-spacing: .1em; }
 .captureReceipt strong { font-size: 11px; }
@@ -248,12 +248,16 @@
 .momentGroup:nth-child(2) .momentSky { background: linear-gradient(145deg, #e8d4a0, #f0bc70 54%, #4c8173 55%); }
 .momentGroup:nth-child(3n) .momentSky { background: linear-gradient(145deg, #315d66, #477c72 54%, #e09143 55%); }
 .momentSky > span { position: absolute; z-index: 2; top: 12px; left: 13px; display: grid; width: 31px; height: 31px; place-items: center; border-radius: 50%; color: white; background: rgba(23,59,60,.72); font: 800 9px/1 var(--font-geist-mono), monospace; }
+.momentSky > img { width: 100%; height: 100%; object-fit: cover; object-position: top center; transform: scale(1.01); }
+.momentSky[data-rendered="true"]::after { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7,24,25,.04) 35%, rgba(7,24,25,.65)); content: ""; pointer-events: none; }
+.momentSky > em { position: absolute; z-index: 2; right: 11px; bottom: 10px; color: white; font: normal 800 7px/1 var(--font-geist-mono), monospace; letter-spacing: .06em; text-shadow: 0 1px 7px rgba(0,0,0,.55); }
 .momentSky i { position: absolute; right: 21%; bottom: 24px; width: 42px; height: 42px; transform: rotate(45deg); background: #225fb3; box-shadow: 22px -18px 0 rgba(255,255,255,.22); }
 .momentSky b { position: absolute; right: 12px; bottom: 14px; width: 72px; height: 7px; transform: rotate(-24deg); border-radius: 999px; background: #ef8c3a; }
 .momentCard > small { display: block; margin: 18px 18px 8px; color: #225fb3; font: 800 8px/1 var(--font-geist-mono), monospace; letter-spacing: .08em; text-transform: uppercase; }
 .momentCard h5 { min-height: 48px; margin: 0 18px 8px; font: 590 21px/1.08 var(--font-story-serif), Georgia, serif; }
 .momentCard > p { min-height: 53px; margin: 0 18px 16px; color: #647873; font-size: 11px; line-height: 1.45; }
-.momentCard footer { padding: 12px 18px; color: #6b7d77; background: #f0f1e7; font: 750 8px/1 var(--font-geist-mono), monospace; letter-spacing: .05em; text-transform: uppercase; }
+.momentCard footer { display: grid; min-height: 52px; align-content: center; gap: 5px; padding: 12px 18px; color: #6b7d77; background: #f0f1e7; font: 750 8px/1.2 var(--font-geist-mono), monospace; letter-spacing: .05em; text-transform: uppercase; }
+.momentCard footer small { color: #8a9893; font-size: 7px; letter-spacing: .02em; text-transform: none; }
 .transitionArrow { display: grid; width: 72px; flex: 0 0 72px; place-items: center; gap: 7px; color: #e47a2e; text-align: center; }
 .transitionArrow span { max-width: 62px; color: #8b6e53; font: 750 7px/1.3 var(--font-geist-mono), monospace; text-transform: uppercase; }
 

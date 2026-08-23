@@ -2,6 +2,7 @@ import "server-only";
 
 import { z } from "zod";
 
+import { captureRenderedJourney, type RenderedJourney } from "@/lib/bright-data/deep-capture";
 import { liveCaptureSchema, type LiveCapture } from "@/lib/capture/public-contract";
 import { parsePublicReferenceUrl } from "@/lib/capture/public-url";
 
@@ -109,6 +110,7 @@ function normalizeCapture(
   requestedUrl: URL,
   intent: string | undefined,
   startedAt: number,
+  renderedJourney?: RenderedJourney,
 ): LiveCapture {
   const records = brightDataResponseSchema.parse(raw);
   const record = records[0];
@@ -119,14 +121,27 @@ function normalizeCapture(
     .sort((left, right) => left.sequence - right.sequence)
     .slice(0, 8);
 
-  const moments = orderedStates.map((state, index) => ({
-    order: index + 1,
-    stage: humanStage(state.state, index, orderedStates.length),
-    actionBefore: humanAction(state.prior_action, index),
-    heading: cleanText(state.heading),
-    excerpt: cleanText(state.text_excerpt),
-    url: state.url ? parsePublicReferenceUrl(state.url).toString() : canonicalUrl.toString(),
-  }));
+  const visualByStateIndex = new Map<number, RenderedJourney["moments"][number]>();
+  renderedJourney?.moments.forEach((visual, visualIndex, visuals) => {
+    const stateIndex =
+      visuals.length === 1 || orderedStates.length === 1
+        ? 0
+        : Math.round((visualIndex / (visuals.length - 1)) * (orderedStates.length - 1));
+    visualByStateIndex.set(stateIndex, visual);
+  });
+
+  const moments = orderedStates.map((state, index) => {
+    const visual = visualByStateIndex.get(index);
+    return {
+      order: index + 1,
+      stage: humanStage(state.state, index, orderedStates.length),
+      actionBefore: humanAction(state.prior_action, index),
+      heading: cleanText(state.heading) ?? visual?.visibleHeadings[0],
+      excerpt: cleanText(state.text_excerpt),
+      url: state.url ? parsePublicReferenceUrl(state.url).toString() : canonicalUrl.toString(),
+      visual,
+    };
+  });
 
   const transitions = moments.slice(1).map((moment, index) => {
     const previous = moments[index];
@@ -157,6 +172,9 @@ function normalizeCapture(
       provider: "Bright Data",
       mode: "live",
       recordCount: records.length,
+      evidenceLayers: renderedJourney
+        ? ["structured-journey", "rendered-browser"]
+        : ["structured-journey"],
     },
     moments,
     transitions,
@@ -171,7 +189,9 @@ function normalizeCapture(
           ? "Let each major journey transition reveal one distinct idea while preserving a continuous sense of place."
           : "Make state changes legible before assigning them narrative meaning.",
       caveat:
-        "This run establishes order and readable content. It does not yet measure exact easing, frame timing, pointer physics, audio, or authorial intent.",
+        renderedJourney
+          ? "Rendered frames and scroll positions were captured, but exact easing, continuous frame timing, pointer physics, audio, and authorial intent remain unresolved."
+          : "This run establishes order and readable content. It does not yet measure exact easing, frame timing, pointer physics, audio, or authorial intent.",
     },
     coverage: [
       {
@@ -188,9 +208,18 @@ function normalizeCapture(
             : "The page changed state, but little readable copy was returned.",
       },
       {
+        dimension: "Rendered visual states",
+        status: renderedJourney ? "grounded" : "unresolved",
+        reason: renderedJourney
+          ? `${renderedJourney.moments.length} rendered browser frames retain measured scroll positions and viewport dimensions.`
+          : "The rendered-browser evidence layer did not complete for this journey.",
+      },
+      {
         dimension: "Fine motion",
-        status: "unresolved",
-        reason: "The collector did not return frame-level timing, easing, or continuous visual deltas.",
+        status: renderedJourney ? "partial" : "unresolved",
+        reason: renderedJourney
+          ? "Separated rendered frames establish visible change, but not continuous easing or frame-perfect timing."
+          : "The collector did not return frame-level timing, easing, or continuous visual deltas.",
       },
       {
         dimension: "Pointer and audio response",
@@ -242,6 +271,7 @@ export async function capturePublicExperience(input: {
   }
 
   if (!response.ok) {
+    console.error(`[capture] Bright Data collector returned ${response.status}.`);
     if (response.status === 408 || response.status === 504) {
       throw new LiveCaptureError(
         "CAPTURE_TIMED_OUT",
@@ -261,7 +291,11 @@ export async function capturePublicExperience(input: {
   let payload: unknown;
   try {
     payload = await response.json();
-    return normalizeCapture(payload, requestedUrl, input.intent, startedAt);
+    brightDataResponseSchema.parse(payload);
+    // Bright Data accounts may serialize collector and Browser API work. Start
+    // the rendered pass only after the structured collector has released.
+    const renderedJourney = await captureRenderedJourney(requestedUrl).catch(() => undefined);
+    return normalizeCapture(payload, requestedUrl, input.intent, startedAt, renderedJourney);
   } catch (error) {
     if (error instanceof LiveCaptureError) throw error;
     throw new LiveCaptureError(

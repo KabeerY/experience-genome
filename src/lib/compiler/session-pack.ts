@@ -42,6 +42,7 @@ export type HumanDecision = z.infer<typeof humanDecisionSchema>;
 export type JudgedReference = z.infer<typeof judgedReferenceSchema>;
 export type PortableProjectGenome = z.infer<typeof portableProjectGenomeSchema>;
 type PortableRule = PortableProjectGenome["rules"][number];
+type PackFile = { path: string; content: string; base64?: boolean };
 
 type CompileInput = {
   title: string;
@@ -133,20 +134,39 @@ function agentContext(project: PortableProjectGenome, agentName: string) {
 }
 
 export function buildSessionPackFiles(project: PortableProjectGenome, references: JudgedReference[]) {
-  const evidence = references.map(({ capture, decision }) => ({
-    source: capture.source,
-    capturedAt: capture.capturedAt,
-    verifiedBy: capture.verification.provider,
-    mode: capture.verification.mode,
-    moments: capture.moments,
-    transitions: capture.transitions,
-    observation: capture.finding.observation,
-    inference: capture.finding.inference,
-    unknowns: capture.coverage.filter((item) => item.status !== "grounded"),
-    humanDecision: decision,
-  }));
+  const screenshotFiles: PackFile[] = [];
+  const evidence = references.map(({ capture, decision }, referenceIndex) => {
+    const safeSource = capture.source.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "reference";
+    const moments = capture.moments.map((moment) => {
+      if (!moment.visual) return moment;
 
-  return [
+      const screenshotFile = `evidence/${String(referenceIndex + 1).padStart(2, "0")}-${safeSource}-moment-${moment.order}.jpg`;
+      const { imageDataUrl, ...visualMeasurements } = moment.visual;
+      screenshotFiles.push({
+        path: screenshotFile,
+        content: imageDataUrl.slice(imageDataUrl.indexOf(",") + 1),
+        base64: true,
+      });
+
+      return { ...moment, visual: { ...visualMeasurements, screenshotFile } };
+    });
+
+    return {
+      source: capture.source,
+      capturedAt: capture.capturedAt,
+      verifiedBy: capture.verification.provider,
+      mode: capture.verification.mode,
+      evidenceLayers: capture.verification.evidenceLayers,
+      moments,
+      transitions: capture.transitions,
+      observation: capture.finding.observation,
+      inference: capture.finding.inference,
+      unknowns: capture.coverage.filter((item) => item.status !== "grounded"),
+      humanDecision: decision,
+    };
+  });
+
+  const files: PackFile[] = [
     {
       path: "README.md",
       content: `# ${project.title} — Experience Pack\n\nThis pack compiles live web evidence and explicit human judgment into portable creative context. It contains principles, not copied pixels.\n\n${project.thesis}\n`,
@@ -191,12 +211,17 @@ export function buildSessionPackFiles(project: PortableProjectGenome, references
     { path: "agents/cursor.mdc", content: agentContext(project, "Cursor") },
     { path: "agents/copilot-instructions.md", content: agentContext(project, "GitHub Copilot") },
   ];
+
+  return [...files, ...screenshotFiles];
 }
 
 export async function downloadSessionPack(project: PortableProjectGenome, references: JudgedReference[]) {
   const zip = new JSZip();
   const files = buildSessionPackFiles(project, references);
-  files.forEach((file) => zip.file(file.path, file.content));
+  files.forEach((file) => {
+    if (file.base64) zip.file(file.path, file.content, { base64: true });
+    else zip.file(file.path, file.content);
+  });
 
   const blob = await zip.generateAsync({ type: "blob" });
   const objectUrl = URL.createObjectURL(blob);

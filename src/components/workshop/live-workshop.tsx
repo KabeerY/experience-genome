@@ -117,7 +117,7 @@ export function LiveWorkshop() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url, intent: intent || undefined }),
-        signal: AbortSignal.timeout(62_000),
+        signal: AbortSignal.timeout(115_000),
       });
       const payload: unknown = await response.json();
 
@@ -337,7 +337,15 @@ export function LiveWorkshop() {
                 </div>
                 <div className={styles.captureReceipt}>
                   <CheckCircle2 size={19} />
-                  <span><small>CAPTURE COMPLETED</small><strong>{(activeReference.capture.durationMs / 1000).toFixed(1)} seconds</strong></span>
+                  <span>
+                    <small>CAPTURE COMPLETED</small>
+                    <strong>
+                      {activeReference.capture.verification.evidenceLayers.includes("rendered-browser")
+                        ? "Structured trace + rendered frames"
+                        : "Structured trace"}
+                      {` · ${(activeReference.capture.durationMs / 1000).toFixed(1)}s`}
+                    </strong>
+                  </span>
                 </div>
               </header>
 
@@ -350,11 +358,38 @@ export function LiveWorkshop() {
                   {activeReference.capture.moments.map((moment, index) => (
                     <div className={styles.momentGroup} key={`${activeReference.key}:${moment.order}`}>
                       <article className={styles.momentCard}>
-                        <div className={styles.momentSky}><span>{String(moment.order).padStart(2, "0")}</span><i /><b /></div>
+                        <div className={styles.momentSky} data-rendered={Boolean(moment.visual)}>
+                          {moment.visual ? (
+                            // This data URL is returned by our same-origin capture endpoint.
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              alt={`Rendered browser frame from ${activeReference.capture.source.name} at ${Math.round(moment.visual.scrollProgress * 100)}% scroll`}
+                              src={moment.visual.imageDataUrl}
+                            />
+                          ) : (
+                            <><i /><b /></>
+                          )}
+                          <span>{String(moment.order).padStart(2, "0")}</span>
+                          {moment.visual && (
+                            <em>
+                              RENDERED FRAME · {Math.round(moment.visual.scrollProgress * 100)}% PAGE
+                            </em>
+                          )}
+                        </div>
                         <small>{stageLabel(moment.order, activeReference.capture.moments.length)}</small>
                         <h5>{moment.heading ?? moment.stage}</h5>
                         <p>{moment.excerpt ?? "No readable excerpt was returned for this moment."}</p>
-                        <footer>{moment.actionBefore}</footer>
+                        <footer>
+                          <span>{moment.actionBefore}</span>
+                          {moment.visual && (
+                            <small>
+                              {moment.visual.runningAnimations} active motion{moment.visual.runningAnimations === 1 ? "" : "s"}
+                              {moment.visual.fixedElements + moment.visual.stickyElements > 0
+                                ? ` · ${moment.visual.fixedElements + moment.visual.stickyElements} anchored layer${moment.visual.fixedElements + moment.visual.stickyElements === 1 ? "" : "s"}`
+                                : ""}
+                            </small>
+                          )}
+                        </footer>
                       </article>
                       {activeReference.capture.transitions[index] && (
                         <div className={styles.transitionArrow}>

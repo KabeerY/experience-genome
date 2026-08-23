@@ -12,6 +12,22 @@ export const capturedMomentSchema = z.object({
   heading: z.string().min(1).optional(),
   excerpt: z.string().min(1).optional(),
   url: z.string().url(),
+  visual: z
+    .object({
+      imageDataUrl: z.string().startsWith("data:image/jpeg;base64,").max(750_000),
+      scrollY: z.number().int().nonnegative(),
+      scrollProgress: z.number().min(0).max(1),
+      viewport: z.object({
+        width: z.number().int().positive(),
+        height: z.number().int().positive(),
+      }),
+      visibleHeadings: z.array(z.string()).max(8),
+      runningAnimations: z.number().int().nonnegative(),
+      fixedElements: z.number().int().nonnegative(),
+      stickyElements: z.number().int().nonnegative(),
+      transformedElements: z.number().int().nonnegative(),
+    })
+    .optional(),
 });
 
 export const capturedTransitionSchema = z.object({
@@ -39,6 +55,7 @@ export const liveCaptureSchema = z.object({
     provider: z.literal("Bright Data"),
     mode: z.literal("live"),
     recordCount: z.number().int().positive(),
+    evidenceLayers: z.array(z.enum(["structured-journey", "rendered-browser"])).min(1),
   }),
   moments: z.array(capturedMomentSchema).min(2).max(8),
   transitions: z.array(capturedTransitionSchema),
