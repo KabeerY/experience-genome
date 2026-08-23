@@ -249,6 +249,7 @@
 
 .questShell,
 .customShell { max-width: 1480px; margin: 70px auto 0; overflow: hidden; border: 1px solid rgba(30,64,66,.18); border-radius: 28px; background: rgba(255, 253, 246, .91); box-shadow: 0 30px 90px rgba(42,68,59,.12); }
+.questShell { scroll-margin-top: 84px; }
 .questHeader { display: grid; grid-template-columns: auto 1fr auto; gap: 26px; align-items: center; min-height: 76px; padding: 12px 22px; border-bottom: 1px solid var(--line); }
 .questHeader > button,
 .backButton { color: var(--cobalt); font-size: 14px; font-weight: 750; }
@@ -257,7 +258,83 @@
 .questProgress div > span { display: grid; width: 22px; height: 22px; place-items: center; border-radius: 50%; color: white; background: #9eaaa5; font-size: 11px; }
 .questProgress .questDone { color: var(--ink); background: var(--cobalt-soft); }
 .questProgress .questDone > span { background: var(--cobalt); }
+.questProgress .questActive { color: white; background: var(--ink); box-shadow: 0 8px 22px rgba(31,62,64,.22); }
+.questProgress .questActive > span { color: var(--ink); background: #ffd07c; }
 .zeroCost { display: flex; align-items: center; gap: 7px; color: var(--leaf); font: 800 10px/1.2 var(--font-geist-mono), monospace; letter-spacing: .08em; }
+.missionGuide { display: grid; grid-template-columns: auto 1fr auto; gap: 16px; align-items: center; padding: 20px 24px; border-bottom: 1px solid rgba(232,136,53,.28); background: linear-gradient(90deg, #fff0cf, #fff8e8); }
+.missionGuide .gatiAvatar { width: 48px; height: 48px; box-shadow: 0 0 0 7px rgba(232,136,53,.14); }
+.missionGuide > div { display: grid; gap: 6px; }
+.missionGuide small { color: #a45c1e; font: 850 9px/1 var(--font-geist-mono), monospace; letter-spacing: .11em; }
+.missionGuide strong { color: var(--ink); font-size: 17px; }
+.missionReward { padding: 9px 12px; border: 1px solid rgba(232,136,53,.3); border-radius: 999px; color: #9a551b; background: #fff9ec; font: 850 10px/1 var(--font-geist-mono), monospace; letter-spacing: .08em; }
+.choiceStage,
+.observeStage,
+.judgeStage,
+.compileStage,
+.completeStage { min-height: 570px; padding: clamp(34px, 5vw, 68px); }
+.stageHeading { max-width: 820px; margin: 0 auto; text-align: center; }
+.stageHeading > small,
+.stageHeadingRow small { color: var(--cobalt); font: 850 10px/1 var(--font-geist-mono), monospace; letter-spacing: .12em; }
+.stageHeading h3,
+.stageHeadingRow h3 { margin: 14px 0 0; font: 600 clamp(36px, 4vw, 58px)/.98 var(--font-story-serif), Georgia, serif; letter-spacing: -.04em; }
+.stageHeading > p { margin: 17px auto 0; color: var(--ink-soft); font-size: 16px; line-height: 1.5; }
+.sourceQuestCards { display: grid; grid-template-columns: 1.2fr .8fr; gap: 18px; max-width: 1060px; margin: 46px auto 0; }
+.sourceQuestCards > button { position: relative; display: grid; grid-template-columns: auto 1fr auto; gap: 18px; align-items: center; min-height: 190px; padding: 34px; border: 1px solid var(--line); border-radius: 22px; color: var(--ink); background: #f7f4e9; text-align: left; transition: transform 180ms ease, box-shadow 180ms ease; }
+.sourceQuestCards > button:hover { transform: translateY(-5px); box-shadow: 0 22px 50px rgba(35,68,69,.13); }
+.sourceQuestCards > button > i { display: grid; width: 54px; height: 54px; place-items: center; border-radius: 50%; color: var(--cobalt); background: white; font: 850 14px/1 var(--font-geist-mono), monospace; font-style: normal; }
+.sourceQuestCards > button > div { display: grid; gap: 8px; }
+.sourceQuestCards small { color: #72837f; font: 800 9px/1 var(--font-geist-mono), monospace; letter-spacing: .08em; }
+.sourceQuestCards strong { font: 600 25px/1.05 var(--font-story-serif), Georgia, serif; }
+.sourceQuestCards p { margin: 0; color: var(--ink-soft); font-size: 13px; line-height: 1.45; }
+.sourceQuestCards .startSource { border: 2px solid var(--cobalt); background: linear-gradient(135deg, #e9f0ff, #f8f7ee); box-shadow: 0 0 0 7px rgba(47,94,170,.09), 0 24px 60px rgba(47,94,170,.12); }
+.startFlag,
+.optionalFlag { position: absolute; top: -13px; left: 24px; display: flex; align-items: center; gap: 7px; padding: 8px 12px; border-radius: 999px; color: white !important; background: var(--cobalt); font: 850 9px/1 var(--font-geist-mono), monospace !important; letter-spacing: .1em; }
+.startFlag { animation: missionPulse 1.8s ease-in-out infinite; }
+.optionalFlag { color: #657570 !important; background: #e9ede5; animation: none; }
+.stageHeadingRow { display: flex; align-items: end; justify-content: space-between; gap: 24px; max-width: 1040px; margin: 0 auto 28px; }
+.stageHeadingRow h3 { font-size: clamp(34px, 3.4vw, 50px); }
+.stageHeadingRow > button { padding: 10px 14px; border: 1px solid var(--line); border-radius: 999px; color: var(--cobalt); font-size: 12px; font-weight: 750; }
+.observeStage .questEvidence { max-width: 1040px; margin: 0 auto; padding: 24px; border: 1px solid var(--line); border-radius: 20px; background: #fffdf7; }
+.steppingTrace[data-replay="idle"] article { opacity: .42; filter: saturate(.45); }
+.steppingTrace[data-replay="playing"] article { opacity: .18; animation: traceUnlock 620ms ease both; animation-delay: calc(var(--step-index) * 540ms); }
+.steppingTrace[data-replay="done"] article { opacity: 1; box-shadow: 0 13px 30px rgba(35,68,69,.08); }
+.stageActionBar { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 28px; }
+.stageActionBar > span { color: #8e6629; font: 850 9px/1 var(--font-geist-mono), monospace; letter-spacing: .12em; }
+.primaryQuestAction,
+.compileQuestButton { display: flex; align-items: center; justify-content: center; gap: 10px; min-width: min(100%, 390px); min-height: 58px; padding: 14px 24px; border-radius: 999px; color: white; background: var(--cobalt); box-shadow: 0 15px 38px rgba(47,94,170,.23); font-size: 15px; font-weight: 800; animation: actionGlow 1.9s ease-in-out infinite; }
+.primaryQuestAction:disabled,
+.compileQuestButton:disabled { opacity: .72; animation: none; }
+.judgeStage { display: grid; align-content: center; background: radial-gradient(circle at 50% 65%, rgba(232,136,53,.12), transparent 42%); }
+.judgeQuestCard { max-width: 850px; margin: 40px auto 0; padding: 36px; border: 1px solid rgba(47,94,170,.2); border-radius: 24px; background: #fffdf7; box-shadow: 0 25px 70px rgba(35,68,69,.1); text-align: center; }
+.judgeQuestCard .truthBadges { align-items: center; justify-content: center; margin-top: 0; }
+.judgeQuestCard .truthBadges code { color: #687a76; font-size: 11px; }
+.judgeQuestCard > h3 { max-width: 720px; margin: 22px auto 0; font: 600 clamp(33px, 3.5vw, 50px)/1.02 var(--font-story-serif), Georgia, serif; letter-spacing: -.035em; }
+.judgeQuestCard > p { color: var(--ink-soft); font-size: 16px; }
+.judgmentActions { display: grid; grid-template-columns: 1.4fr .6fr; gap: 10px; margin-top: 28px; }
+.judgmentActions button { min-height: 58px; border: 1px solid var(--line); border-radius: 14px; color: var(--ink); background: #f4f1e6; font-size: 14px; font-weight: 800; }
+.judgmentActions .recommendedChoice { display: flex; align-items: center; justify-content: center; gap: 9px; color: white; background: var(--marigold); box-shadow: 0 14px 34px rgba(232,136,53,.22); }
+.recommendedChoice span { padding: 5px 7px; border-radius: 999px; color: #804311; background: #ffe7b3; font: 850 8px/1 var(--font-geist-mono), monospace; letter-spacing: .07em; }
+.compileStage { display: grid; align-content: center; }
+.compileChain { display: flex; align-items: center; justify-content: center; gap: 10px; max-width: 1100px; margin: 50px auto 38px; }
+.compileChain > span { display: grid; min-width: 130px; gap: 8px; padding: 17px; border: 1px solid var(--line); border-radius: 15px; background: #fffdf7; text-align: center; }
+.compileChain small { color: var(--cobalt); font: 800 8px/1 var(--font-geist-mono), monospace; letter-spacing: .09em; }
+.compileChain strong { font-size: 13px; }
+.compileChain > svg { flex: 0 0 auto; color: var(--marigold); }
+.compileQuestButton { margin: 0 auto; color: white; background: var(--ink); box-shadow: 0 15px 38px rgba(31,62,64,.23); }
+.compileHint { margin: 15px auto 0; color: var(--ink-soft); font-size: 12px; text-align: center; }
+.completeStage { display: grid; justify-items: center; align-content: center; background: radial-gradient(circle, #fff0c9, #f4f4e7 65%); text-align: center; }
+.questBurst { display: grid; width: 86px; height: 86px; place-items: center; margin-bottom: 18px; border-radius: 50%; color: white; background: var(--marigold); box-shadow: 0 0 0 14px rgba(232,136,53,.13), 0 0 0 28px rgba(232,136,53,.06); animation: completePop 700ms cubic-bezier(.2,.9,.2,1) both; }
+.completeStage > small { color: #9a581e; font: 850 10px/1 var(--font-geist-mono), monospace; letter-spacing: .13em; }
+.completeStage > h3 { margin: 22px 0 0; font: 600 clamp(42px, 5vw, 70px)/.92 var(--font-story-serif), Georgia, serif; letter-spacing: -.045em; }
+.completeStage > p { max-width: 680px; color: var(--ink-soft); font-size: 16px; line-height: 1.5; }
+.questAchievements { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 16px; }
+.questAchievements span { display: flex; align-items: center; gap: 7px; padding: 10px 12px; border-radius: 999px; color: var(--leaf); background: rgba(255,255,255,.72); font-size: 11px; font-weight: 750; }
+.completeActions { display: flex; gap: 10px; margin-top: 28px; }
+.completeActions a,
+.completeActions button { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 12px 18px; border-radius: 999px; font-size: 13px; font-weight: 800; }
+.completeActions a { color: white; background: var(--cobalt); }
+.completeActions button { border: 1px solid var(--line); color: var(--ink); background: rgba(255,255,255,.65); }
+.questSafetyLine { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 13px 20px; border-top: 1px solid var(--line); color: var(--leaf); background: #f4f7ef; font: 800 9px/1.3 var(--font-geist-mono), monospace; letter-spacing: .08em; }
 .guideMessage { display: flex; align-items: center; gap: 16px; padding: 18px 24px; border-bottom: 1px solid var(--line); background: #fff4dc; }
 .guideMessage .gatiAvatar { width: 46px; height: 46px; }
 .guideMessage p { margin: 6px 0 0; color: #3c5556; font-size: 16px; }
@@ -353,6 +430,10 @@
 @keyframes scrollPulse { 0%,100% { transform: translateX(-20%); } 50% { transform: translateX(120%); } }
 @keyframes aksharHover { 0%,100% { transform: translateY(-4px) rotate(-2deg); } 50% { transform: translateY(5px) rotate(3deg); } }
 @keyframes gatiFly { 0%,100% { transform: translate(0,-4px) rotate(-5deg); } 50% { transform: translate(12px,6px) rotate(8deg); } }
+@keyframes missionPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(47,94,170,.28); } 50% { box-shadow: 0 0 0 9px rgba(47,94,170,0); } }
+@keyframes actionGlow { 0%,100% { transform: translateY(0); box-shadow: 0 15px 38px rgba(47,94,170,.2); } 50% { transform: translateY(-3px); box-shadow: 0 20px 48px rgba(47,94,170,.32); } }
+@keyframes traceUnlock { from { opacity: .18; filter: saturate(.35); transform: translateY(14px) scale(.97); } to { opacity: 1; filter: saturate(1); transform: translateY(0) scale(1); } }
+@keyframes completePop { from { opacity: 0; transform: scale(.35) rotate(-18deg); } to { opacity: 1; transform: scale(1) rotate(0); } }
 
 @supports (animation-timeline: view()) {
   .mangaPanels article,
@@ -375,6 +456,8 @@
   .worldPath { grid-template-columns: 1fr; max-width: 620px; }
   .pathAction { padding: 6px; }
   .questGrid { grid-template-columns: 1fr 1.6fr; }
+  .compileChain { flex-wrap: wrap; }
+  .compileChain > svg { transform: rotate(0); }
   .judgmentCard { grid-column: 1 / -1; border-top: 1px solid var(--line); }
   .packButton { margin-top: 22px; }
   .unknowns { grid-template-columns: 1fr 1fr; }
@@ -425,6 +508,25 @@
   .questHeader { grid-template-columns: 1fr auto; }
   .questProgress { grid-column: 1 / -1; grid-row: 2; order: 3; overflow-x: auto; justify-content: flex-start; }
   .zeroCost { justify-self: end; font-size: 8px; }
+  .missionGuide { grid-template-columns: auto 1fr; padding: 17px; }
+  .missionGuide strong { font-size: 14px; line-height: 1.35; }
+  .missionReward { grid-column: 2; justify-self: start; }
+  .choiceStage,
+  .observeStage,
+  .judgeStage,
+  .compileStage,
+  .completeStage { min-height: 560px; padding: 32px 18px; }
+  .sourceQuestCards { grid-template-columns: 1fr; gap: 24px; }
+  .sourceQuestCards > button { min-height: 170px; padding: 28px 20px; }
+  .stageHeadingRow { align-items: flex-start; }
+  .stageHeadingRow > button { flex: 0 0 auto; }
+  .observeStage .questEvidence { padding: 16px; }
+  .judgmentActions { grid-template-columns: 1fr; }
+  .judgmentActions .recommendedChoice { flex-wrap: wrap; }
+  .compileChain { display: grid; grid-template-columns: 1fr; width: 100%; margin-block: 30px; }
+  .compileChain > svg { margin: 0 auto; transform: rotate(90deg); }
+  .compileChain > span { width: 100%; }
+  .completeActions { display: grid; width: 100%; }
   .questGrid { grid-template-columns: 1fr; }
   .referenceShelf,
   .questEvidence { border-right: 0; border-bottom: 1px solid var(--line); }
@@ -442,5 +544,10 @@
   .landscape img,
   .aksharGlyph,
   .gatiGlyph,
-  .scrollCue i::after { animation: none; transform: none; }
+  .scrollCue i::after,
+  .startFlag,
+  .primaryQuestAction,
+  .compileQuestButton,
+  .questBurst,
+  .steppingTrace[data-replay="playing"] article { animation: none; transform: none; }
 }

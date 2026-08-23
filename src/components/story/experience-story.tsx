@@ -41,6 +41,8 @@ import styles from "./experience-story.module.css";
 type WorkshopMode = "choose" | "guided" | "custom";
 type ReferenceChoice = "archive" | "linear";
 type Judgment = "unreviewed" | "preferred" | "rejected";
+type ReplayStatus = "idle" | "playing" | "done";
+type QuestStage = "choose" | "observe" | "judge" | "compile" | "complete";
 type CustomBrief = {
   host: string;
   note: string;
@@ -53,22 +55,39 @@ function SectionIndex({ children }: { children: string }) {
 
 function StoryWorkshop() {
   const [mode, setMode] = useState<WorkshopMode>("choose");
-  const [reference, setReference] = useState<ReferenceChoice>("archive");
+  const [reference, setReference] = useState<ReferenceChoice | null>(null);
+  const [replayStatus, setReplayStatus] = useState<ReplayStatus>("idle");
+  const [observationConfirmed, setObservationConfirmed] = useState(false);
   const [judgment, setJudgment] = useState<Judgment>("unreviewed");
   const [packStatus, setPackStatus] = useState<"idle" | "working" | "done">("idle");
   const [customBrief, setCustomBrief] = useState<CustomBrief | null>(null);
 
   const trace = reference === "linear" ? realWebTrace : demoTrace;
-  const questStep =
-    mode !== "guided"
-      ? 0
-      : reference === "archive"
-        ? 1
+  const questStage: QuestStage =
+    reference === null
+      ? "choose"
+      : !observationConfirmed
+        ? "observe"
         : judgment === "unreviewed"
-          ? 2
+          ? "judge"
           : packStatus === "done"
-            ? 4
-            : 3;
+            ? "complete"
+            : "compile";
+  const questStep = {
+    choose: 1,
+    observe: 2,
+    judge: 3,
+    compile: 4,
+    complete: 4,
+  }[questStage];
+
+  useEffect(() => {
+    if (mode !== "guided") return;
+    const frame = window.requestAnimationFrame(() => {
+      document.getElementById("guided-quest")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [mode, questStage]);
 
   const guidedGenomes = useMemo(
     () =>
@@ -109,6 +128,30 @@ function StoryWorkshop() {
     setPackStatus("done");
   }
 
+  function startGuidedQuest() {
+    setReference(null);
+    setReplayStatus("idle");
+    setObservationConfirmed(false);
+    setJudgment("unreviewed");
+    setPackStatus("idle");
+    setMode("guided");
+  }
+
+  function chooseReference(nextReference: ReferenceChoice) {
+    setReference(nextReference);
+    setReplayStatus("idle");
+    setObservationConfirmed(false);
+    setJudgment("unreviewed");
+    setPackStatus("idle");
+  }
+
+  async function replayTrace() {
+    if (replayStatus === "playing") return;
+    setReplayStatus("playing");
+    await new Promise((resolve) => window.setTimeout(resolve, 1900));
+    setReplayStatus("done");
+  }
+
   function prepareCustomBrief(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -140,7 +183,7 @@ function StoryWorkshop() {
 
       {mode === "choose" && (
         <div className={styles.modeChooser}>
-          <button onClick={() => setMode("guided")} type="button">
+          <button onClick={startGuidedQuest} type="button">
             <span className={styles.modeIcon}><Compass size={30} /></span>
             <small>RECOMMENDED / 3 MINUTES</small>
             <h3>Play the guided quest</h3>
@@ -158,13 +201,22 @@ function StoryWorkshop() {
       )}
 
       {mode === "guided" && (
-        <div className={styles.questShell}>
+        <div className={styles.questShell} id="guided-quest">
           <header className={styles.questHeader}>
             <button onClick={() => setMode("choose")} type="button">← Modes</button>
             <div className={styles.questProgress}>
               {["Choose", "Observe", "Judge", "Compile"].map((label, index) => (
-                <div className={index + 1 <= questStep ? styles.questDone : ""} key={label}>
-                  <span>{index + 1 <= questStep ? <Check size={13} /> : index + 1}</span>
+                <div
+                  className={
+                    questStage === "complete" || index + 1 < questStep
+                      ? styles.questDone
+                      : index + 1 === questStep
+                        ? styles.questActive
+                        : ""
+                  }
+                  key={label}
+                >
+                  <span>{questStage === "complete" || index + 1 < questStep ? <Check size={13} /> : index + 1}</span>
                   <strong>{label}</strong>
                 </div>
               ))}
@@ -172,92 +224,151 @@ function StoryWorkshop() {
             <span className={styles.zeroCost}><CircleDot size={13} /> VERIFIED REPLAY · 0 LIVE CREDITS</span>
           </header>
 
-          <div className={styles.guideMessage}>
+          <div className={styles.missionGuide} data-stage={questStage}>
             <span className={styles.gatiAvatar}><Wind size={20} /></span>
             <div>
-              <small>GATI / YOUR GUIDE</small>
-              <p>
-                {reference === "archive"
-                  ? "Choose the real-web reference. I’ll show you the movement Akshar preserved."
-                  : judgment === "unreviewed"
-                    ? "The sequence is observed. Whether it matters is yours to decide."
-                    : packStatus === "done"
-                      ? "Quest complete. The evidence and your judgment are now portable."
-                      : "Good. That judgment can enter the Project Genome without changing the evidence."}
-              </p>
+              <small>MISSION {questStep} OF 4 · GATI IS GUIDING YOU</small>
+              <strong>
+                {questStage === "choose" && "Choose the evidence source marked START HERE."}
+                {questStage === "observe" && replayStatus === "idle" && "Press Play to watch the captured experience unfold."}
+                {questStage === "observe" && replayStatus === "playing" && "Watch the state sequence—not just the screenshots."}
+                {questStage === "observe" && replayStatus === "done" && "Evidence recovered. Continue when the sequence makes sense."}
+                {questStage === "judge" && "Now supply what the machine cannot: did this matter to you?"}
+                {questStage === "compile" && "Your judgment is attached. Compile it into portable creative memory."}
+                {questStage === "complete" && "Quest complete. You turned a web experience into agent-ready context."}
+              </strong>
             </div>
+            <span className={styles.missionReward}>+{questStep * 25} XP</span>
           </div>
 
-          <div className={styles.questGrid}>
-            <aside className={styles.referenceShelf}>
-              <span>CHOOSE A CAPTURE</span>
-              <button
-                className={reference === "archive" ? styles.sourceActive : ""}
-                onClick={() => { setReference("archive"); setJudgment("unreviewed"); }}
-                type="button"
-              >
-                <i>A</i><div><small>CONTROLLED / VERIFIED</small><strong>Monsoon Archive</strong><span>3 states · complete contract</span></div><Check size={16} />
-              </button>
-              <button
-                className={reference === "linear" ? styles.sourceActive : ""}
-                onClick={() => { setReference("linear"); setJudgment("unreviewed"); }}
-                type="button"
-              >
-                <i>B</i><div><small>REAL WEB / VERIFIED</small><strong>Linear landing page</strong><span>3 regions · sparse capture</span></div><ArrowRight size={16} />
-              </button>
-              <p>Each card is a persisted Bright Data result. Opening it consumes no additional credit.</p>
-            </aside>
+          {questStage === "choose" && (
+            <section className={styles.choiceStage}>
+              <div className={styles.stageHeading}>
+                <small>01 / CHOOSE</small>
+                <h3>Which evidence should we investigate?</h3>
+                <p>Start with a persisted real-web capture. Nothing here launches a live scraper.</p>
+              </div>
+              <div className={styles.sourceQuestCards}>
+                <button className={styles.startSource} onClick={() => chooseReference("linear")} type="button">
+                  <span className={styles.startFlag}><MousePointer2 size={14} /> START HERE</span>
+                  <i>B</i>
+                  <div><small>REAL WEB · BRIGHT DATA VERIFIED</small><strong>Linear public landing page</strong><p>Replay three scroll-separated semantic regions.</p></div>
+                  <ArrowRight size={24} />
+                </button>
+                <button onClick={() => chooseReference("archive")} type="button">
+                  <span className={styles.optionalFlag}>OPTIONAL RELIABILITY FIXTURE</span>
+                  <i>A</i>
+                  <div><small>CONTROLLED · BRIGHT DATA VERIFIED</small><strong>Monsoon Archive</strong><p>Replay a complete state/action/state contract.</p></div>
+                  <ArrowRight size={20} />
+                </button>
+              </div>
+            </section>
+          )}
 
-            <div className={styles.questEvidence}>
-              <div className={styles.evidenceTopline}>
-                <div><small>EXPERIENCE TRACE</small><strong>{trace.sourceName}</strong></div>
-                <code>{trace.collectorId.slice(0, 7)}…{trace.collectorId.slice(-3)}</code>
+          {questStage === "observe" && reference && (
+            <section className={styles.observeStage}>
+              <div className={styles.stageHeadingRow}>
+                <div><small>02 / OBSERVE</small><h3>Replay the experience trace.</h3></div>
+                <button onClick={() => chooseReference(reference === "linear" ? "archive" : "linear")} type="button">Switch source</button>
               </div>
-              <div className={styles.steppingTrace}>
-                {trace.states.map((state, index) => (
-                  <div className={styles.traceStep} key={state.id}>
-                    <article>
-                      <span>{state.id}</span>
-                      <div className={styles.traceIllustration} data-step={index + 1}><i /><b /></div>
-                      <small>{state.label}</small>
-                      <strong>{state.heading}</strong>
-                    </article>
-                    {trace.actions[index] && (
-                      <div className={styles.traceAction}><ArrowDown size={15} /><span>{trace.actions[index].label}</span></div>
-                    )}
-                  </div>
-                ))}
-              </div>
-              <div className={styles.traceHonesty}>
-                <ScanLine size={17} />
-                <p><strong>Observed:</strong> ordered regions and prior actions. <strong>Unresolved:</strong> exact easing, frame timing, pointer physics, and audio.</p>
-              </div>
-            </div>
-
-            <aside className={styles.judgmentCard}>
-              <small>GENOME RULE / {reference === "linear" ? "LC01" : "C01"}</small>
-              <div className={styles.truthBadges}>
-                <span><Eye size={12} /> OBSERVED</span>
-                {judgment !== "unreviewed" && <span data-judgment={judgment}><Heart size={12} /> {judgment.toUpperCase()}</span>}
-              </div>
-              <h3>{reference === "linear" ? "Successive scrolls traverse three semantic regions." : "Spatial arrival precedes semantic reveal."}</h3>
-              <p>The machine records what happened. You decide whether this principle belongs in your project.</p>
-              <div>
-                <button className={judgment === "preferred" ? styles.keepSelected : ""} onClick={() => setJudgment("preferred")} type="button"><Heart size={16} /> Keep</button>
-                <button className={judgment === "rejected" ? styles.rejectSelected : ""} onClick={() => setJudgment("rejected")} type="button">Reject</button>
-              </div>
-              {judgment !== "unreviewed" && (
-                <div className={styles.projectRulePreview}>
-                  <small>{judgment === "preferred" ? "ENTERS PROJECT GENOME" : "RECORDED AS REJECTED"}</small>
-                  <strong>{judgment === "preferred" ? "R05 / Narrative depth markers" : "Source principle excluded"}</strong>
+              <div className={styles.questEvidence}>
+                <div className={styles.evidenceTopline}>
+                  <div><small>EXPERIENCE TRACE</small><strong>{trace.sourceName}</strong></div>
+                  <code>{trace.collectorId.slice(0, 7)}…{trace.collectorId.slice(-3)}</code>
                 </div>
-              )}
-              <button className={styles.packButton} disabled={judgment === "unreviewed" || packStatus === "working"} onClick={compilePack} type="button">
-                {packStatus === "done" ? <><Check size={17} /> Experience Pack downloaded</> : packStatus === "working" ? <><Sparkles size={17} /> Weaving pack…</> : <><Download size={17} /> Compile Experience Pack</>}
+                <div className={styles.steppingTrace} data-replay={replayStatus}>
+                  {trace.states.map((state, index) => (
+                    <div className={styles.traceStep} key={state.id}>
+                      <article style={{ "--step-index": index } as CSSProperties}>
+                        <span>{state.id}</span>
+                        <div className={styles.traceIllustration} data-step={index + 1}><i /><b /></div>
+                        <small>{state.label}</small>
+                        <strong>{state.heading}</strong>
+                      </article>
+                      {trace.actions[index] && (
+                        <div className={styles.traceAction}><ArrowDown size={15} /><span>{trace.actions[index].label}</span></div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <div className={styles.traceHonesty}>
+                  <ScanLine size={17} />
+                  <p><strong>Observed:</strong> ordered regions and prior actions. <strong>Unresolved:</strong> exact easing, frame timing, pointer physics, and audio.</p>
+                </div>
+              </div>
+              <div className={styles.stageActionBar}>
+                {replayStatus !== "done" ? (
+                  <button className={styles.primaryQuestAction} disabled={replayStatus === "playing"} onClick={replayTrace} type="button">
+                    {replayStatus === "playing" ? <><Sparkles size={18} /> Replaying S01 → S02 → S03…</> : <><Play size={18} /> Play the 3 captured states</>}
+                  </button>
+                ) : (
+                  <button className={styles.primaryQuestAction} onClick={() => setObservationConfirmed(true)} type="button">Evidence understood — continue <ArrowRight size={18} /></button>
+                )}
+                <span>{replayStatus === "done" ? "TRACE UNLOCKED · +25 XP" : "YOUR NEXT CLICK"}</span>
+              </div>
+            </section>
+          )}
+
+          {questStage === "judge" && reference && (
+            <section className={styles.judgeStage}>
+              <div className={styles.stageHeading}>
+                <small>03 / JUDGE</small>
+                <h3>The machine observed a rule. Only you can value it.</h3>
+              </div>
+              <div className={styles.judgeQuestCard}>
+                <div className={styles.truthBadges}><span><Eye size={12} /> OBSERVED</span><code>{trace.states.map((state) => state.id).join(" → ")}</code></div>
+                <h3>{reference === "linear" ? "Successive scrolls traverse three semantic regions." : "Spatial arrival precedes semantic reveal."}</h3>
+                <p>Should this principle enter your Project Genome?</p>
+                <div className={styles.judgmentActions}>
+                  <button className={styles.recommendedChoice} onClick={() => setJudgment("preferred")} type="button"><Heart size={18} /> Keep this principle <span>RECOMMENDED</span></button>
+                  <button onClick={() => setJudgment("rejected")} type="button">Reject it</button>
+                </div>
+              </div>
+            </section>
+          )}
+
+          {questStage === "compile" && reference && (
+            <section className={styles.compileStage}>
+              <div className={styles.stageHeading}>
+                <small>04 / COMPILE</small>
+                <h3>{judgment === "preferred" ? "Your preferred rule is ready to become portable." : "Your rejection is part of the creative memory too."}</h3>
+              </div>
+              <div className={styles.compileChain}>
+                <span><small>EVIDENCE</small><strong>{trace.states[0]?.id}–{trace.states.at(-1)?.id}</strong></span><ArrowRight size={18} />
+                <span><small>OBSERVATION</small><strong>{reference === "linear" ? "LC01" : "C01"}</strong></span><ArrowRight size={18} />
+                <span><small>JUDGMENT</small><strong>{judgment.toUpperCase()}</strong></span><ArrowRight size={18} />
+                <span><small>PROJECT RULE</small><strong>{judgment === "preferred" ? "R05" : "REJECTED"}</strong></span><ArrowRight size={18} />
+                <span><small>OUTPUT</small><strong>AGENTS.md</strong></span>
+              </div>
+              <button className={styles.compileQuestButton} disabled={packStatus === "working"} onClick={compilePack} type="button">
+                {packStatus === "working" ? <><Sparkles size={19} /> Compiling evidence + judgment…</> : <><Download size={19} /> Compile and download Experience Pack</>}
               </button>
-            </aside>
-          </div>
-          <div className={styles.fullLensLink}><Link href="/studio">Open the complete Genome Lens <ArrowRight size={18} /></Link></div>
+              <p className={styles.compileHint}>One click creates the vendor-neutral pack for Codex, Claude, Gemini, Cursor, and humans.</p>
+            </section>
+          )}
+
+          {questStage === "complete" && (
+            <section className={styles.completeStage}>
+              <div className={styles.questBurst}><Sparkles size={38} /></div>
+              <small>EXPEDITION COMPLETE · 100 XP</small>
+              <h3>You compiled an experience,<br />not a screenshot.</h3>
+              <p>The downloaded pack contains evidence, unknowns, human judgment, anti-copy rules, and agent adapters.</p>
+              <div className={styles.questAchievements}>
+                <span><Check size={15} /> Real evidence inspected</span>
+                <span><Check size={15} /> Human judgment attached</span>
+                <span><Check size={15} /> Project rule synthesized</span>
+                <span><Check size={15} /> Experience Pack downloaded</span>
+              </div>
+              <div className={styles.completeActions}>
+                <Link href="/studio">Open the full Genome Lens <ArrowRight size={18} /></Link>
+                <button onClick={startGuidedQuest} type="button">Replay quest</button>
+              </div>
+            </section>
+          )}
+
+          {questStage !== "complete" && (
+            <div className={styles.questSafetyLine}><CircleDot size={12} /> This guided quest replays persisted Bright Data results and spends zero live credits.</div>
+          )}
         </div>
       )}
 
@@ -288,10 +399,10 @@ function StoryWorkshop() {
                 <div><dt>OBSERVE</dt><dd>Scroll states, pinned elements, depth cues, transition order, and semantic reveals.</dd></div>
                 <div><dt>HUMAN QUESTION</dt><dd>{customBrief.note}</dd></div>
               </dl>
-              <p>Live public collection remains operator-gated to protect 4,993 judge credits. The verified quest below demonstrates the complete evidence-to-genome path.</p>
+              <p><strong>{customBrief.host} has not been scraped.</strong> Live collection remains operator-gated to protect 4,993 judge credits. The separate verified demo uses persisted Linear evidence.</p>
               <div className={styles.noticeActions}>
                 <button className={styles.secondaryNoticeAction} onClick={() => setCustomBrief(null)} type="button">Use a different URL</button>
-                <button onClick={() => { setMode("guided"); setReference("linear"); }} type="button">Continue with verified evidence <ArrowRight size={16} /></button>
+                <button onClick={startGuidedQuest} type="button">Launch separate guided demo <ArrowRight size={16} /></button>
               </div>
             </div>
           )}
