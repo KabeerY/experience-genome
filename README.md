@@ -31,11 +31,12 @@ That is why `epistemicBasis` and `humanJudgment` are separate fields. A rule can
 
 1. Experience the four-act WebGL story: False Reading → Perception → Memory → Compilation.
 2. Open **Genome Lens** and click a Genome Rule.
-3. Inspect its complete path: state/action/state → delta → inference → human judgment.
-4. Change Keep/Reject judgment without rewriting the evidence.
-5. Enter **Dream Foundry** to inspect inherited, mutated, rejected and invented Project Rules.
-6. Compile a real `experience-pack.zip` containing canonical JSON, evidence, anti-copy constraints and adapters for Codex, Claude, Gemini, Cursor and Copilot.
-7. Open **Drift Lab** to distinguish the real-web product proof from a deterministic same-Collector-ID healing experiment.
+3. Switch between the controlled fixture and a real persisted Linear capture.
+4. Inspect a complete path: state/action/state → delta → inference → human judgment.
+5. Mark the real reference **Keep** and watch it enter the multi-reference Project Genome without rewriting evidence.
+6. Enter **Dream Foundry** to inspect inherited, mutated, rejected and invented Project Rules.
+7. Compile a real `experience-pack.zip` containing canonical JSON, evidence, anti-copy constraints and adapters for Codex, Claude, Gemini, Cursor and Copilot.
+8. Open **Drift Lab** to distinguish the real-web product proof from a deterministic same-Collector-ID healing experiment.
 
 ![Genome Lens evidence workbench](public/readme/genome-lens.png)
 
@@ -44,7 +45,7 @@ That is why `epistemicBasis` and `humanJudgment` are separate fields. A rule can
 Bright Data is the perception layer—not a decorative API call.
 
 - A **custom Scraper Studio collector** produces structured records from public web pages.
-- Every run keeps its `c_*` collector identity and `j_*` job identity.
+- Every run keeps its `c_*` collector identity and response/snapshot identity.
 - Collected records are normalized into an **Experience Trace**: ordered states, triggering actions and observed deltas.
 - Verified captures are persisted as replay artifacts so every public demo view does not consume another credit.
 - A separate public fixture changes its representation while retaining the same visible meaning and output contract. That creates a controlled break → heal → recover experiment.
@@ -53,20 +54,22 @@ Bright Data is the perception layer—not a decorative API call.
 
 The public deployment never exposes an unrestricted collection endpoint. It runs in **Verified Replay** mode. Live collection is an operator-only submission/video step. This prevents abuse and preserves the 5,000-credit grant for judging.
 
-Current bounded plan: one three-record baseline, one expected broken run, one same-ID heal, one three-record recovery, and a very small real-web capture. No broad crawling.
+The completed proof used seven one-record payloads total: six for the transparent controlled healing experiment and one for the real external reference. That is **7 / 5,000 credits (0.14%)**, leaving 4,993 for judge follow-up and testing. No broad crawling, public live endpoint, or automatic retry loop exists.
 
 ### Bright Data evidence ledger
 
 | Artifact | Status | Evidence |
 | --- | --- | --- |
 | Initial observer attempt | Failed before template generation; no records | [`evidence/brightdata/observer-create.json`](evidence/brightdata/observer-create.json) |
-| Drift collector | Building | `c_*` will be written here after creation |
-| Baseline job | Not run | exactly 3 expected records |
-| Broken job | Not run | expected contract failure on shifted representation |
-| Same-ID heal | Not run | must retain the same `c_*` |
-| Recovery job | Not run | exactly 3 expected records |
+| Drift collector | Verified custom collector | `c_mt62ojenhz0udx9w5` · [`drift-observer-create.json`](evidence/brightdata/drift-observer-create.json) |
+| Baseline job | Verified | 1 payload / 3 ordered states · [`drift-baseline-run.json`](evidence/brightdata/drift-baseline-run.json) |
+| Broken job | Verified controlled failure | same schema, empty `experience_states` · [`drift-broken-run.json`](evidence/brightdata/drift-broken-run.json) |
+| Same-ID heal | Verified | approval + save completed without changing `c_mt62ojenhz0udx9w5` · [`drift-heal-sequence.json`](evidence/brightdata/drift-heal-sequence.json) |
+| Recovery job | Verified | exact sequences 1/2/3 and complete contract · [`drift-sequence-recovery-run.json`](evidence/brightdata/drift-sequence-recovery-run.json) |
+| Real-web collector | Verified custom collector | `c_mt63a8sa1etvcxxbei` · [`real-web-observer-create.json`](evidence/brightdata/real-web-observer-create.json) |
+| Linear public-web capture | Verified, intentionally sparse | 1 payload / 3 ordered regions · [`real-web-run.json`](evidence/brightdata/real-web-run.json) |
 
-The UI and this table remain explicit about unknown or pending evidence. A failed attempt is kept in history rather than erased.
+The UI and this table remain explicit about unknown or sparse evidence. A failed attempt is kept in history rather than erased. The controlled experiment used six one-record runs—including three visible intermediate failures while refining the heal—and the real-web proof used one. See [`drift-ledger.json`](evidence/brightdata/drift-ledger.json) for the controlled audit trail.
 
 ![Controlled Drift Lab](public/readme/drift-lab.png)
 
@@ -75,7 +78,7 @@ The UI and this table remain explicit about unknown or pending evidence. A faile
 ```mermaid
 flowchart LR
     A[Public interactive reference] --> B[Bright Data custom collector]
-    B --> C[Structured records + c_* / j_* evidence]
+    B --> C[Structured records + collector / snapshot evidence]
     C --> D[Grounding + Experience Trace]
     D --> E[Experience Genome IR]
     H[Human Keep / Reject / Note] --> E
@@ -158,6 +161,8 @@ Quality gates:
 pnpm lint
 pnpm build
 ```
+
+Submission helpers: [`docs/DEMO_SCRIPT.md`](docs/DEMO_SCRIPT.md) · [`docs/SUBMISSION_COPY.md`](docs/SUBMISSION_COPY.md)
 
 ## Environment contract
 

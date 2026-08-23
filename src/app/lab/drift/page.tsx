@@ -32,7 +32,7 @@ export default function DriftLabPage() {
         <aside>
           <span>BRIGHT DATA BUDGET POLICY</span>
           <strong>Replay by default</strong>
-          <p>No live run is triggered by this public interface. Verified job artifacts are persisted after capture.</p>
+          <p>No live run is triggered by this public interface. Seven of 5,000 record credits were used; 4,993 remain.</p>
         </aside>
       </section>
 
@@ -41,7 +41,7 @@ export default function DriftLabPage() {
           <header><span>01 / BASELINE</span><Check size={16} /></header>
           <div className={styles.stageVisual}><i /><i /><i /></div>
           <h2>Known structure</h2>
-          <p>The collector reads three state records from stable baseline selectors.</p>
+          <p>The collector reads one payload containing three ordered states from stable baseline selectors.</p>
           <dl>
             <div><dt>Fixture</dt><dd>baseline-v1</dd></div>
             <div><dt>Output</dt><dd>1 record / 3 states</dd></div>
@@ -71,7 +71,7 @@ export default function DriftLabPage() {
           <header><span>03 / RECOVER</span><RefreshCw size={16} /></header>
           <div className={`${styles.stageVisual} ${styles.healedVisual}`}><i /><i /><i /></div>
           <h2>Recover the contract</h2>
-          <p>Bright Data refactors the development version; the same collector ID returns the three records again.</p>
+          <p>Bright Data refactors the development version; the same collector ID returns the three ordered states again.</p>
           <dl>
             <div><dt>Collector</dt><dd>{collectorId}</dd></div>
             <div><dt>Required</dt><dd>same c_*</dd></div>

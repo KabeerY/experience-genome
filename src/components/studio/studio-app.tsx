@@ -27,17 +27,22 @@ import { useMemo, useState } from "react";
 
 import {
   demoGenome,
+  demoGenomes,
   demoProjectGenome,
   demoTrace,
   demoTraces,
+  realWebGenome,
+  realWebProjectRule,
+  realWebTrace,
 } from "@/lib/demo-data";
 import { downloadExperiencePack } from "@/lib/compiler/experience-pack";
-import type { GenomeClaim, ProjectRule } from "@/lib/genome/schema";
+import type { ExperienceTrace, GenomeClaim, ProjectRule } from "@/lib/genome/schema";
 import { verifyProvenance } from "@/lib/genome/verify";
 
 import styles from "./studio-app.module.css";
 
 type WorkspaceTab = "observe" | "synthesize" | "compile";
+type ReferenceKey = "fixture" | "real-web";
 
 const statusLabel = {
   observed: "OBSERVED",
@@ -90,11 +95,11 @@ function BasisBadge({ claim }: { claim: GenomeClaim }) {
   );
 }
 
-function TraceTimeline() {
+function TraceTimeline({ trace }: { trace: ExperienceTrace }) {
   return (
     <div className={styles.timeline}>
-      {demoTrace.states.map((state, index) => {
-        const action = demoTrace.actions[index];
+      {trace.states.map((state, index) => {
+        const action = trace.actions[index];
         return (
           <div className={styles.timelineSegment} key={state.id}>
             <article className={styles.stateCard}>
@@ -218,35 +223,82 @@ function ProjectRuleCard({
 
 export function StudioApp() {
   const [tab, setTab] = useState<WorkspaceTab>("observe");
-  const [claims, setClaims] = useState(demoGenome.claims);
+  const [activeReference, setActiveReference] = useState<ReferenceKey>("fixture");
+  const [claims, setClaims] = useState(demoGenomes.flatMap((genome) => genome.claims));
   const [selectedClaimId, setSelectedClaimId] = useState("C01");
   const [selectedRuleId, setSelectedRuleId] = useState("R01");
   const [compileStatus, setCompileStatus] = useState<"idle" | "working" | "done">("idle");
   const [replayToken, setReplayToken] = useState(0);
 
-  const selectedClaim = claims.find((claim) => claim.id === selectedClaimId) ?? claims[0];
+  const activeTrace = activeReference === "fixture" ? demoTrace : realWebTrace;
+  const activeGenomeTemplate = activeReference === "fixture" ? demoGenome : realWebGenome;
+  const activeClaims = claims.filter(
+    (claim) => claim.referenceId === activeGenomeTemplate.referenceId,
+  );
+  const selectedClaim =
+    activeClaims.find((claim) => claim.id === selectedClaimId) ?? activeClaims[0];
+  const currentGenomes = useMemo(
+    () =>
+      demoGenomes.map((genome) => ({
+        ...genome,
+        claims: claims.filter((claim) => claim.referenceId === genome.referenceId),
+      })),
+    [claims],
+  );
+  const currentProject = useMemo(() => {
+    const realWebSelected = claims.some(
+      (claim) => claim.id === "LC01" && claim.humanJudgment === "preferred",
+    );
+
+    return {
+      ...demoProjectGenome,
+      rules: [
+        ...demoProjectGenome.rules,
+        ...(realWebSelected ? [realWebProjectRule] : []),
+      ],
+    };
+  }, [claims]);
+  const realWebJudgment = claims.find((claim) => claim.id === "LC01")?.humanJudgment;
   const selectedRule =
-    demoProjectGenome.rules.find((rule) => rule.id === selectedRuleId) ?? demoProjectGenome.rules[0];
-  const currentGenome = useMemo(() => ({ ...demoGenome, claims }), [claims]);
+    currentProject.rules.find((rule) => rule.id === selectedRuleId) ?? currentProject.rules[0];
   const issues = useMemo(
-    () => verifyProvenance(demoTraces, [currentGenome], demoProjectGenome),
-    [currentGenome],
+    () => verifyProvenance(demoTraces, currentGenomes, currentProject),
+    [currentGenomes, currentProject],
   );
 
   function updateJudgment(judgment: GenomeClaim["humanJudgment"]) {
     setClaims((current) =>
       current.map((claim) =>
-        claim.id === selectedClaimId ? { ...claim, humanJudgment: judgment } : claim,
+        claim.id === selectedClaimId
+          ? {
+              ...claim,
+              humanJudgment: judgment,
+              humanNote:
+                claim.humanNote ??
+                (judgment === "preferred"
+                  ? "Selected by the human in Genome Lens."
+                  : judgment === "rejected"
+                    ? "Rejected by the human in Genome Lens."
+                    : undefined),
+            }
+          : claim,
       ),
     );
+  }
+
+  function selectReference(reference: ReferenceKey) {
+    const genome = reference === "fixture" ? demoGenome : realWebGenome;
+    setActiveReference(reference);
+    setSelectedClaimId(genome.claims[0].id);
+    setReplayToken((token) => token + 1);
   }
 
   async function compilePack() {
     setCompileStatus("working");
     await downloadExperiencePack({
       traces: demoTraces,
-      genomes: [currentGenome],
-      project: demoProjectGenome,
+      genomes: currentGenomes,
+      project: currentProject,
     });
     setCompileStatus("done");
     window.setTimeout(() => setCompileStatus("idle"), 5000);
@@ -262,9 +314,9 @@ export function StudioApp() {
         </Link>
         <div className={styles.runIdentity}>
           <span className={styles.liveDot} />
-          VERIFIED BRIGHT DATA REPLAY
+          2 VERIFIED BRIGHT DATA REPLAYS
           <i />
-          c_mt62…w5
+          7 / 5,000 RECORDS USED
         </div>
         <nav>
           <Link href="/lab/drift"><RefreshCw size={14} /> Drift Lab</Link>
@@ -301,7 +353,11 @@ export function StudioApp() {
       </section>
 
       <section className={styles.referenceStrip}>
-        <article className={styles.referenceActive}>
+        <button
+          className={`${styles.referenceCard} ${activeReference === "fixture" ? styles.referenceActive : ""}`}
+          onClick={() => selectReference("fixture")}
+          type="button"
+        >
           <div className={styles.referenceIndex}>A</div>
           <div>
             <span>CONTROLLED / BRIGHT DATA VERIFIED</span>
@@ -309,17 +365,23 @@ export function StudioApp() {
             <small>1 record · 3 states · 2 deltas</small>
           </div>
           <Check size={16} />
-        </article>
-        <article>
+        </button>
+        <button
+          className={`${styles.referenceCard} ${activeReference === "real-web" ? styles.referenceActive : ""}`}
+          onClick={() => selectReference("real-web")}
+          type="button"
+        >
           <div className={styles.referenceIndex}>B</div>
           <div>
-            <span>REAL WEB / QUEUED</span>
-            <strong>External reference</strong>
-            <small>Bright Data observer preparing</small>
+            <span>REAL WEB / BRIGHT DATA VERIFIED</span>
+            <strong>Linear public landing page</strong>
+            <small>
+              1 record · 3 regions · {realWebJudgment === "preferred" ? "selected for synthesis" : realWebJudgment === "rejected" ? "rejected by human" : "judgment pending"}
+            </small>
           </div>
-          <CircleDashed size={16} />
-        </article>
-        <article className={styles.referenceBrief}>
+          <Check size={16} />
+        </button>
+        <article className={`${styles.referenceCard} ${styles.referenceBrief}`}>
           <div className={styles.referenceIndex}><Sparkles size={15} /></div>
           <div>
             <span>PROJECT BRIEF</span>
@@ -347,11 +409,13 @@ export function StudioApp() {
             <div className={styles.panelHeading}>
               <div>
                 <span>EXPERIENCE TRACE</span>
-                <h2>What actually happened</h2>
+                <h2>{activeTrace.sourceName}</h2>
               </div>
-              <div className={styles.modeBadge}>VERIFIED REPLAY / c_mt62…w5</div>
+              <div className={styles.modeBadge}>
+                VERIFIED REPLAY / {activeTrace.collectorId.slice(0, 6)}…{activeTrace.collectorId.slice(-2)}
+              </div>
             </div>
-            <TraceTimeline key={replayToken} />
+            <TraceTimeline key={`${activeReference}-${replayToken}`} trace={activeTrace} />
           </section>
 
           <section className={styles.genomePanel}>
@@ -360,10 +424,10 @@ export function StudioApp() {
                 <span>GENOME CLAIMS</span>
                 <h2>Evidence becomes rules</h2>
               </div>
-              <small>{claims.length} claims</small>
+              <small>{activeClaims.length} claims</small>
             </div>
             <div className={styles.claimList}>
-              {claims.map((claim) => (
+              {activeClaims.map((claim) => (
                 <button
                   className={claim.id === selectedClaimId ? styles.claimActive : ""}
                   key={claim.id}
@@ -390,7 +454,7 @@ export function StudioApp() {
               <TriangleAlert size={18} />
             </div>
             <div className={styles.coverageRows}>
-              {demoGenome.coverage.map((item) => (
+              {activeGenomeTemplate.coverage.map((item) => (
                 <div key={item.dimension} data-status={item.status}>
                   <strong>{item.dimension}</strong>
                   <span>{item.status}</span>
@@ -418,7 +482,7 @@ export function StudioApp() {
               <div className={styles.artifactRingOne} />
               <div className={styles.artifactRingTwo} />
               <div className={styles.artifactCore}><Orbit size={28} /></div>
-              {demoProjectGenome.rules.map((rule, index) => (
+              {currentProject.rules.map((rule, index) => (
                 <span key={rule.id} style={{ "--i": index } as React.CSSProperties}>{rule.id}</span>
               ))}
             </div>
@@ -426,7 +490,7 @@ export function StudioApp() {
 
           <div className={styles.ruleGrid}>
             <div className={styles.ruleList}>
-              {demoProjectGenome.rules.map((rule) => (
+              {currentProject.rules.map((rule) => (
                 <ProjectRuleCard
                   active={selectedRuleId === rule.id}
                   key={rule.id}
@@ -452,7 +516,7 @@ export function StudioApp() {
                 <div>
                   {selectedRule.sourceClaimRefs.length ? (
                     <>
-                      <code>S01–S03</code><ArrowRight size={13} />
+                      <code>{selectedRule.sourceClaimRefs.some((ref) => ref.startsWith("LC")) ? "LS01–LS03" : "S01–S03"}</code><ArrowRight size={13} />
                       <code>{selectedRule.sourceClaimRefs.join(", ")}</code><ArrowRight size={13} />
                       <code>{selectedRule.id}</code><ArrowRight size={13} />
                       <code>AGENTS.md</code>
@@ -505,7 +569,7 @@ export function StudioApp() {
       <footer className={styles.statusbar}>
         <div><span className={styles.liveDot} /> VERIFIED REPLAY MODE</div>
         <div>PUBLIC VIEW COST <strong>0 LIVE RECORDS</strong></div>
-        <div>SYNTHESIS PROFILE <strong>OX-ALPHA READY</strong></div>
+        <div>SYNTHESIS <strong>{currentProject.rules.some((rule) => rule.id === "R05") ? "2 REFERENCES SELECTED" : "1 SELECTED · 1 UNREVIEWED"}</strong></div>
         <div className={issues.length ? styles.issue : styles.pass}>
           {issues.length ? <TriangleAlert size={12} /> : <Check size={12} />}
           PROVENANCE {issues.length ? "CHECK" : "PASS"}

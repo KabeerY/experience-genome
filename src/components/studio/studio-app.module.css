@@ -165,7 +165,7 @@
   position: relative;
 }
 
-.referenceStrip article {
+.referenceCard {
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
@@ -174,9 +174,12 @@
   min-height: 75px;
   border-right: 1px solid var(--line);
   color: #8e8b81;
+  text-align: left;
+  transition: color 180ms ease, background 180ms ease;
 }
 
-.referenceStrip article:last-child { border-right: 0; }
+.referenceCard:last-child { border-right: 0; }
+.referenceStrip button.referenceCard:hover { color: var(--bone); background: rgba(255,255,255,.025); }
 .referenceStrip .referenceActive { color: var(--bone); background: rgba(91, 140, 255, 0.045); }
 .referenceStrip .referenceBrief { background: rgba(182, 154, 96, 0.035); }
 .referenceIndex {
@@ -188,7 +191,7 @@
   font: 600 11px/1 var(--font-geist-mono), monospace;
   color: var(--brass);
 }
-.referenceStrip article div:nth-child(2) { display: grid; gap: 4px; }
+.referenceCard div:nth-child(2) { display: grid; gap: 4px; }
 .referenceStrip span { font: 600 9px/1 var(--font-geist-mono), monospace; letter-spacing: 0.12em; color: #747168; }
 .referenceStrip strong { font-size: 13px; font-weight: 550; }
 .referenceStrip small { font: 10px/1.2 var(--font-geist-mono), monospace; color: #68665f; }
@@ -433,7 +436,7 @@
   .workspaceHeader h1 { font-size:52px; }
   .headerActions { margin-top:24px;flex-wrap:wrap; }
   .referenceStrip { grid-template-columns:1fr; }
-  .referenceStrip article { border-right:0;border-bottom:1px solid var(--line); }
+  .referenceCard { border-right:0;border-bottom:1px solid var(--line); }
   .tabs { overflow-x:auto; }
   .tabs button { min-width:125px; }
   .timeline { padding:14px; }
