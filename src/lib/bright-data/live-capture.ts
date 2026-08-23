@@ -166,6 +166,10 @@ function normalizeCapture(
         namedMoments >= 2
           ? "The page appears to reveal distinct ideas as the visitor moves through the experience."
           : "The journey changes state over time, but the captured text is too sparse to assign a reliable narrative purpose.",
+      candidateRule:
+        namedMoments >= 2
+          ? "Let each major journey transition reveal one distinct idea while preserving a continuous sense of place."
+          : "Make state changes legible before assigning them narrative meaning.",
       caveat:
         "This run establishes order and readable content. It does not yet measure exact easing, frame timing, pointer physics, audio, or authorial intent.",
     },

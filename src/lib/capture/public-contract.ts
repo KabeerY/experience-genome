@@ -45,6 +45,7 @@ export const liveCaptureSchema = z.object({
   finding: z.object({
     observation: z.string().min(1),
     inference: z.string().min(1),
+    candidateRule: z.string().min(1),
     caveat: z.string().min(1),
   }),
   coverage: z.array(captureCoverageSchema).min(1),
