@@ -60,7 +60,7 @@ export async function interpretCapture(rawCapture: unknown) {
     prompt: JSON.stringify({
       task: "Interpret this live web experience and produce provenance-safe claims.",
       renderedInput: hasRenderedInput
-        ? "One compact contact sheet is attached. Read its labeled frames from left to right."
+        ? `${contactSheet.length} compact ordered contact sheet${contactSheet.length === 1 ? " is" : "s are"} attached. Read every labeled frame in moment order.`
         : "Pixel frames remain human-visible and exportable. Your input contains the browser-measured properties and visible headings from each frame, not the pixels themselves.",
       capture: interpretationInput(capture),
     }),

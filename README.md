@@ -46,7 +46,7 @@ That is why evidence basis and human judgment are separate fields. Something can
 Bright Data is used twice in every complete live run:
 
 - A custom Scraper Studio collector returns a bounded structured journey.
-- Scraping Browser renders the supplied page, scrolls through three positions, captures JPEG evidence, and measures visible headings, fixed/sticky layers, active animations, and transformed elements.
+- Scraping Browser renders the supplied page, settles at five distributed scroll positions, captures JPEG evidence, and measures visible headings, fixed/sticky layers, active animations, and transformed elements.
 
 If the rendered layer is unavailable, the interface says so and the model receives measurements only. It never labels a measurement-only run as visual input. If collection fails, no stored response is silently substituted.
 

@@ -238,7 +238,7 @@ export async function captureRenderedJourney(url: URL): Promise<RenderedJourney>
     await enterInteractiveExperience(page).catch(() => false);
     cdp = await context.newCDPSession(page);
 
-    const positions = [0, 0.5, 0.92];
+    const positions = [0, 0.25, 0.5, 0.75, 0.92];
     const moments: RenderedMoment[] = [];
     let lastFrameError: unknown;
     for (const [index, position] of positions.entries()) {

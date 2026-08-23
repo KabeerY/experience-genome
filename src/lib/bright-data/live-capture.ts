@@ -91,6 +91,20 @@ function humanAction(action: string | undefined, index: number) {
   return action ? sentenceCase(action) : "Continued through the experience";
 }
 
+function proportionalIndex(index: number, targetLength: number, sourceLength: number) {
+  if (targetLength <= 1 || sourceLength <= 1) return 0;
+  return Math.round((index / (targetLength - 1)) * (sourceLength - 1));
+}
+
+function renderedStage(scrollProgress: number, index: number, total: number) {
+  if (index === 0) return "Arrival";
+  if (index === total - 1) return "Deep scroll";
+  const progress = Math.round(scrollProgress * 100);
+  if (progress <= 30) return "Quarter scroll";
+  if (progress <= 60) return "Mid scroll";
+  return "Late scroll";
+}
+
 function sourceNameFromHost(host: string) {
   const meaningfulPart = host
     .replace(/^www\./, "")
@@ -129,20 +143,17 @@ function normalizeCapture(
     .sort((left, right) => left.sequence - right.sequence)
     .slice(0, 8);
 
-  const visualByStateIndex = new Map<number, RenderedJourney["moments"][number]>();
-  renderedJourney?.moments.forEach((visual, visualIndex, visuals) => {
-    const stateIndex =
-      visuals.length === 1 || orderedStates.length === 1
-        ? 0
-        : Math.round((visualIndex / (visuals.length - 1)) * (orderedStates.length - 1));
-    visualByStateIndex.set(stateIndex, visual);
-  });
-
-  const moments = orderedStates.map((state, index) => {
-    const visual = visualByStateIndex.get(index);
+  const momentCount = Math.max(orderedStates.length, renderedJourney?.moments.length ?? 0);
+  const moments = Array.from({ length: momentCount }, (_, index) => {
+    const state = orderedStates[proportionalIndex(index, momentCount, orderedStates.length)];
+    const visual = renderedJourney?.moments[
+      proportionalIndex(index, momentCount, renderedJourney.moments.length)
+    ];
     return {
       order: index + 1,
-      stage: humanStage(state.state, index, orderedStates.length),
+      stage: visual
+        ? renderedStage(visual.scrollProgress, index, momentCount)
+        : humanStage(state.state, index, momentCount),
       actionBefore: humanAction(state.prior_action, index),
       heading: cleanText(state.heading) ?? visual?.visibleHeadings[0],
       excerpt: cleanText(state.text_excerpt),
@@ -155,11 +166,15 @@ function normalizeCapture(
     const previous = moments[index];
     const destination = moment.heading ?? moment.stage;
     const origin = previous.heading ?? previous.stage;
+    const previousProgress = previous.visual ? Math.round(previous.visual.scrollProgress * 100) : null;
+    const currentProgress = moment.visual ? Math.round(moment.visual.scrollProgress * 100) : null;
     return {
       from: previous.order,
       to: moment.order,
       action: moment.actionBefore,
-      observedChange: `The visible semantic region changed from “${origin}” to “${destination}”.`,
+      observedChange: origin === destination && previousProgress !== null && currentProgress !== null
+        ? `The browser advanced from ${previousProgress}% to ${currentProgress}% scroll while retaining the extracted heading “${destination}”.`
+        : `The visible semantic region changed from “${origin}” to “${destination}”.`,
     };
   });
 
