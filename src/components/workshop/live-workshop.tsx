@@ -619,7 +619,7 @@ export function LiveWorkshop() {
                 <div>
                   <small>EVIDENCE INTERPRETER</small>
                   {activeReference.interpretationStatus === "thinking" ? (
-                    <><strong>Reasoning across the trace and rendered measurements…</strong><p>The live evidence is already safe; this agent is separating observation, inference, and unknowns.</p></>
+                    <><strong>Reading the trace and rendered evidence…</strong><p>The live evidence is already safe; this agent is separating observation, inference, and unknowns.</p></>
                   ) : activeReference.interpretationStatus === "ready" ? (
                     <>
                       <strong>Interpretation complete · provenance checks passed</strong>

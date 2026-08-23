@@ -15,7 +15,7 @@ export default function DriftLabPage() {
   return (
     <main className={styles.lab}>
       <header className={styles.header}>
-        <Link href="/studio">EXPERIENCE//COMPILER</Link>
+        <Link href="/#capture-lab">EXPERIENCE//COMPILER</Link>
         <span>CONTROLLED RELIABILITY PROOF</span>
         <Link href="/">Story ↗</Link>
       </header>
@@ -32,7 +32,7 @@ export default function DriftLabPage() {
         <aside>
           <span>BRIGHT DATA BUDGET POLICY</span>
           <strong>Replay by default</strong>
-          <p>No live run is triggered by this reliability interface. Eight of 5,000 record credits were used; 4,992 remain.</p>
+          <p>No live run is triggered by this reliability interface. It replays versioned proof artifacts without consuming capture credits.</p>
         </aside>
       </section>
 

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-
-import { StudioApp } from "@/components/studio/studio-app";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Genome Lens — Experience Compiler",
@@ -8,6 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function StudioPage() {
-  return <StudioApp />;
+  redirect("/#capture-lab");
 }
-

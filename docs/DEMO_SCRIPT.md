@@ -1,70 +1,90 @@
 # Three-minute demo script
 
-Target: **2:45–2:55**. Record at 1080p or 1440p. Hide bookmarks, notifications, keys and unrelated tabs.
+Target: **2:45–2:58**. Record at 1080p or 1440p. Hide bookmarks, notifications, credentials, and unrelated tabs.
 
-## 0:00–0:20 — enter the world
+The capture and model stages are genuinely live. Use clean jump cuts while they run; do not imply an instant response.
 
-Start at `https://experience-genome.vercel.app`.
+## 0:00–0:28 — the problem
 
-> “A screenshot captures pixels. A normal scraper captures symbols. But the web was still moving.”
+Open `https://experience-genome.vercel.app`.
 
-Briefly show the light landscape, Akshar and Gati, then click **Scroll into the story**.
+> “A screenshot captures pixels. A normal scraper captures symbols. But an interactive page keeps moving after the report ends.”
 
-## 0:20–0:48 — the false reading
-
-Scroll through the manga panels.
-
-> “Akshar successfully reads text, links and structure. Gati notices the experience continuing behind him: what changed, after which action, and in what order?”
-
-Pause on:
+Scroll through Akshar reading structure and Gati following change. Pause briefly on:
 
 > “Then you have read it. You have not understood it.”
 
-## 0:48–1:13 — evidence and memory
+## 0:28–0:48 — start a real run
 
-Scroll through the three physical state cards and the genome tree.
+Open the live compiler and paste:
 
-> “Bright Data grounds ordered state/action/state evidence. Observation and human taste remain separate branches: the machine records what happened; the human tells it what mattered.”
+```text
+https://the-goonies.webflow.io
+```
 
-Point out the explicit unresolved dimensions.
+Add the human statement:
 
-## 1:13–2:04 — play the guided quest
+> “Keep the feeling of a continuous cinematic world, but invent new imagery, pacing, and composition.”
 
-At **The Experience Workshop**, choose **Play the guided quest**.
+Click **Start live capture**.
 
-1. Click **B / Razorpay Buildathon**.
-2. Show the real collector suffix and three sparse regions.
-3. Point out that timing, easing, pointer physics and audio remain unresolved.
-4. Click **Keep**.
-5. Show `R05 / Narrative depth markers` entering the Project Genome.
-6. Click **Compile Experience Pack** and show **Experience Pack downloaded**.
+> “This is not a prepared site card. Bright Data is opening the URL now, recording a structured journey, and rendering three browser frames.”
 
-> “Judging the rule never rewrites its evidence. Public judge views use verified replay and cost zero live Bright Data credits.”
+Jump cut after completion.
 
-## 2:04–2:27 — full Genome Lens
+## 0:48–1:22 — inspect evidence
 
-Click **Open the complete Genome Lens**. Select Reference B, Keep, then **02 Synthesize**.
+Show the real frames at 0%, 50%, and 92% scroll.
 
-> “The old decorative rings are gone. Each leaf is now a concrete inherited, mutated, rejected or invented rule. Click R05 and its provenance resolves back to the real capture.”
+> “Each frame retains the action before it, visible headings, scroll position, anchored layers, animation counts, and transformed elements.”
 
-## 2:27–2:48 — same-ID healing
+Show the Evidence Interpreter result.
 
-Open **Drift Lab**.
+> “Kimi K2.6 sees the ordered contact sheet. Observation, inference, and unknowns remain separate, and every observed claim must cite a real moment.”
 
-> “The reliability proof is separate and controlled. A DOM mutation broke the original selector contract. Bright Data healed the development version in place, and the same `c_*` recovered the exact three-state contract.”
+Point out the explicit unknowns: continuous easing, hover behavior, audio, and exact causality.
 
-Show the collector ID and verified ledger.
+## 1:22–1:46 — human taste gate
 
-## 2:48–2:55 — close
+Click **Keep this**, edit the reusable principle if useful, explain why, and click **Attach human judgment**.
+
+> “The model can record what happened. Only the human decides whether it mattered.”
+
+## 1:46–2:22 — compile a new project
+
+Use:
+
+- Project: **Monsoon Atlas**
+- Brief: an original light-theme interactive story through Indian monsoon landscapes
+- Desired feeling: **wonder, calm, tactile, anticipation**
+
+Click **Synthesize Project Genome**, then jump cut after verification.
+
+Show inherited, mutated, and invented rules.
+
+> “The synthesis agent proposes transformations; a deterministic verifier rejects missing citations, crossed preference lanes, fake evidence, and invented rules that pretend to come from a source.”
+
+## 2:22–2:43 — portable output
+
+Click **Copy agent context** and **Download Experience Pack**.
+
+> “The ZIP contains the Project Genome, evidence, captured screenshots, unknowns, an anti-copy contract, and adapters for Codex, Claude, Gemini, Cursor, and Copilot.”
+
+## 2:43–2:56 — controlled healing proof
+
+Flash the separate **Drift Lab**.
+
+> “The arbitrary web run proves the product. This controlled fixture separately proves repeatable same-collector healing after representation drift.”
+
+## Close
 
 > “Observe the experience. Supply the judgment. Compile what mattered. This is Experience Compiler.”
 
 ## Recording checklist
 
-- Run once through the exact path before recording.
-- Keep browser zoom at 90–100%; do not zoom mid-recording.
-- Ensure **Experience Pack downloaded** appears.
-- Say “action-conditioned change,” not “universal causation.”
-- Say “controlled same-ID healing proof,” not “it heals every website.”
-- Mention eight of 5,000 records used; replayed judge views trigger zero additional records.
-- Keep the uploaded video under three minutes.
+- Verify production capture, interpretation, synthesis, copy, and ZIP before recording.
+- Keep the browser at 100% zoom and use smooth, deliberate scrolling.
+- Do not expose API keys, collector IDs, internal request IDs, or terminal windows.
+- Say “three sampled rendered moments,” not “we captured every animation frame.”
+- Say “action-conditioned evidence,” not “universal causation.”
+- Keep live waits honest with visible jump cuts.

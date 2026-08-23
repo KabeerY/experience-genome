@@ -4,136 +4,129 @@
 
 **Observe the experience. Supply the judgment. Compile what mattered.**
 
-[Live product](https://experience-genome.vercel.app) · [Genome Lens](https://experience-genome.vercel.app/studio) · [Drift Lab](https://experience-genome.vercel.app/lab/drift) · [Controlled fixture](https://experience-genome.vercel.app/fixture?representation=baseline)
+[Live product](https://experience-genome.vercel.app) · [Live compiler](https://experience-genome.vercel.app/#capture-lab) · [Drift Lab](https://experience-genome.vercel.app/lab/drift) · [Source](https://github.com/KabeerY/experience-genome)
 
-Experience Compiler turns interactive web evidence plus human taste into portable design rules for any coding AI—without cloning the references.
+Experience Compiler visits a public interactive website, records an ordered browser journey, asks a human what mattered, and compiles the combination into reusable design rules for coding agents—without cloning the reference.
 
 ```text
-real experience → evidence → inference → human judgment
-                → reusable rule → multi-reference synthesis → agent context
+real experience → rendered evidence → bounded inference → human judgment
+                → Project Genome → provenance verification → agent context
 ```
 
-## The problem
+## The product
 
-A screenshot captures appearance. A DOM scrape captures symbols and structure. Neither reliably captures the ordered experience around them: what changed after a scroll, what waited before appearing, or which part a particular human actually loved.
+A judge can paste any public URL and use the real workflow:
 
-Experience Compiler preserves three different kinds of truth:
+1. A Bright Data collector records ordered state/action/state evidence.
+2. Bright Data Scraping Browser captures real rendered frames and browser measurements at bounded scroll positions.
+3. A Fireworks multimodal Evidence Interpreter separates observation, inference, and unresolved unknowns.
+4. The human marks the proposed principle **Keep** or **Leave behind** and can explain why.
+5. A Fireworks Genome Synthesizer proposes inherited, mutated, rejected, and invented project rules.
+6. A deterministic verifier rejects invalid provenance or crossed judgment lanes.
+7. The browser downloads an Experience Pack containing evidence, rules, unknowns, anti-copy constraints, screenshots, and adapters for Codex, Claude, Gemini, Cursor, and Copilot.
+
+No login or prepared per-site response is required. A workshop session persists locally in IndexedDB so a browser refresh does not destroy captured evidence or human judgment.
+
+## Why this is different
+
+A screenshot captures appearance. A DOM scrape captures symbols and structure. Neither establishes the ordered experience around them: what appeared after a scroll, what remained fixed, or what a particular human loved.
+
+Experience Compiler keeps three truths distinct:
 
 | Truth | Question | Source |
 | --- | --- | --- |
-| Descriptive | What happened? | state/action/state evidence |
-| Causal | What changed after an action? | observed deltas, with stronger claims only when grounded |
-| Normative | Did this matter? Was it liked? | explicit human judgment |
+| Descriptive | What was visible and what changed? | rendered frames, measurements, ordered states |
+| Interpretive | What principle might explain the experience? | calibrated model inference |
+| Normative | Did it matter to this person? | explicit Keep/Reject decision and note |
 
-That is why `epistemicBasis` and `humanJudgment` are separate fields. A rule can be both `observed` **and** `preferred`.
+That is why evidence basis and human judgment are separate fields. Something can be directly observed and still be disliked; something can be inferred and preferred.
 
-## What a judge can do
+## Bright Data is the perception layer
 
-1. Scroll through a light parallax expedition where Akshar reads structure and Gati follows change.
-2. Watch the manga-style problem story resolve into a state/action/state evidence path and a branching Experience Genome.
-3. Enter the embedded **Guided Quest** without leaving the page.
-4. Open the real Razorpay Buildathon capture collected with Bright Data.
-5. Mark the real observation **Keep** and watch `R05` enter the multi-reference Project Genome without rewriting evidence.
-6. Compile a real `experience-pack.zip` containing canonical JSON, evidence, anti-copy constraints and adapters for Codex, Claude, Gemini, Cursor and Copilot.
-7. Open the full **Genome Lens** for deeper provenance inspection or **Drift Lab** for the deterministic same-Collector-ID healing proof.
+Bright Data is used twice in every complete live run:
 
-![Genome Lens evidence workbench](public/readme/genome-lens.png)
+- A custom Scraper Studio collector returns a bounded structured journey.
+- Scraping Browser renders the supplied page, scrolls through three positions, captures JPEG evidence, and measures visible headings, fixed/sticky layers, active animations, and transformed elements.
 
-## Why Bright Data is central
+If the rendered layer is unavailable, the interface says so and the model receives measurements only. It never labels a measurement-only run as visual input. If collection fails, no stored response is silently substituted.
 
-Bright Data is the perception layer—not a decorative API call.
+The separate [Drift Lab](https://experience-genome.vercel.app/lab/drift) is a controlled fixture for the repeatable break → same-collector heal → recover proof. It is deliberately separate from arbitrary live web capture.
 
-- A **custom Scraper Studio collector** produces structured records from public web pages.
-- Every run keeps its `c_*` collector identity and response/snapshot identity.
-- Collected records are normalized into an **Experience Trace**: ordered states, triggering actions and observed deltas.
-- Verified captures are persisted as replay artifacts so every public demo view does not consume another credit.
-- A separate public fixture changes its representation while retaining the same visible meaning and output contract. That creates a controlled break → heal → recover experiment.
+Historical Bright Data artifacts, including failed attempts and the controlled recovery ledger, remain in [`evidence/brightdata`](evidence/brightdata).
 
-### Credit discipline
+## Bounded agent architecture
 
-The public deployment never exposes an unrestricted collection endpoint. It runs in **Verified Replay** mode. Live collection is an operator-only submission/video step. This prevents abuse and preserves the 5,000-credit grant for judging.
+This is not an agent swarm. Two model roles sit inside a compiler pipeline:
 
-The completed proof used eight one-record payloads total: six for the transparent controlled healing experiment and two bounded real-web runs. That is **8 / 5,000 credits (0.16%)**, leaving 4,992 for judge follow-up and testing. No broad crawling or automatic retry loop exists.
+```text
+Bright Data Journey Scout
+          ↓
+Evidence Interpreter (Fireworks / Kimi K2.6)
+          ↓
+Human taste gate
+          ↓
+Genome Synthesizer (Fireworks / Kimi K2.6)
+          ↓
+Deterministic provenance verifier
+          ↓
+Portable Experience Pack
+```
 
-### Bright Data evidence ledger
+The model boundary is OpenAI-compatible and provider-neutral. Fireworks is the validated deployment provider; interpreter and synthesizer model IDs can be changed independently.
 
-| Artifact | Status | Evidence |
-| --- | --- | --- |
-| Initial observer attempt | Failed before template generation; no records | [`evidence/brightdata/observer-create.json`](evidence/brightdata/observer-create.json) |
-| Drift collector | Verified custom collector | `c_mt62ojenhz0udx9w5` · [`drift-observer-create.json`](evidence/brightdata/drift-observer-create.json) |
-| Baseline job | Verified | 1 payload / 3 ordered states · [`drift-baseline-run.json`](evidence/brightdata/drift-baseline-run.json) |
-| Broken job | Verified controlled failure | same schema, empty `experience_states` · [`drift-broken-run.json`](evidence/brightdata/drift-broken-run.json) |
-| Same-ID heal | Verified | approval + save completed without changing `c_mt62ojenhz0udx9w5` · [`drift-heal-sequence.json`](evidence/brightdata/drift-heal-sequence.json) |
-| Recovery job | Verified | exact sequences 1/2/3 and complete contract · [`drift-sequence-recovery-run.json`](evidence/brightdata/drift-sequence-recovery-run.json) |
-| Real-web collector | Verified custom collector | `c_mt63a8sa1etvcxxbei` · [`real-web-observer-create.json`](evidence/brightdata/real-web-observer-create.json) |
-| Linear public-web capture | Verified, intentionally sparse | 1 payload / 3 ordered regions · [`real-web-run.json`](evidence/brightdata/real-web-run.json) |
-| Razorpay Buildathon capture | Verified, captured during final product QA | 1 payload / 3 ordered regions · [`razorpay-real-web-run.json`](evidence/brightdata/razorpay-real-web-run.json) |
+Structured generation uses:
 
-The UI and this table remain explicit about unknown or sparse evidence. A failed attempt is kept in history rather than erased. The controlled experiment used six one-record runs—including three visible intermediate failures while refining the heal—and the real-web proof used one. See [`drift-ledger.json`](evidence/brightdata/drift-ledger.json) for the controlled audit trail.
-
-![Controlled Drift Lab](public/readme/drift-lab.png)
+- JSON Schema-constrained output;
+- the same schema embedded in the prompt;
+- one bounded repair attempt;
+- Zod parsing;
+- semantic checks for evidence citations, source keys, judgment lanes, invention, and unresolved claims.
 
 ## Architecture
 
 ```mermaid
 flowchart LR
-    A[Public interactive reference] --> B[Bright Data custom collector]
-    B --> C[Structured records + collector / snapshot evidence]
-    C --> D[Grounding + Experience Trace]
-    D --> E[Experience Genome IR]
-    H[Human Keep / Reject / Note] --> E
-    E --> F[Project Genome synthesis]
-    F --> G[Portable Experience Pack]
-    G --> I[Codex / Claude / Gemini / Cursor / Copilot]
+    A[Public URL] --> B[Bright Data collector]
+    A --> C[Bright Data Scraping Browser]
+    B --> D[Ordered states and actions]
+    C --> E[Rendered frames and measurements]
+    D --> F[Evidence Interpreter]
+    E --> F
+    F --> G[Observed / inferred / unresolved]
+    H[Human Keep / Reject / Why] --> I[Genome Synthesizer]
+    G --> I
+    J[Project brief and desired affect] --> I
+    I --> K[Provenance verifier]
+    K --> L[Project Genome]
+    L --> M[Experience Pack]
 ```
 
-The build is deliberately a compiler pipeline, not an agent swarm:
+Core stack:
 
-```text
-Ground → Abstract → Judge → Synthesize → Verify → Compile
-```
-
-- **Next.js 16 / React 19** on Vercel
-- **React Three Fiber / Three.js** plus layered CSS scenery for the scroll-linked landscape and distinct Akshar/Gati motion
-- **Zod** for the canonical intermediate representation and provenance constraints
-- **JSZip** for client-side portable pack compilation
-- **Bright Data Scraper Studio** for public-web grounding and self-healing proof
-- **OpenAI-compatible model provider boundary** for OX Alpha today and Fireworks/other providers later
-- No authentication and no database in the hackathon path; replay JSON is versioned, judgments stay local, and the artifact downloads as a ZIP
-
-## Intermediate representation
-
-The central object is not a prompt. It is a verifiable Experience Genome.
-
-```ts
-type GenomeClaim = {
-  epistemicBasis: "observed" | "inferred" | "user-specified" | "unresolved";
-  humanJudgment: "preferred" | "rejected" | "neutral" | "unreviewed";
-  evidenceRefs: string[];
-  statement: string;
-  interpretation?: string;
-  humanNote?: string;
-};
-```
-
-The verifier rejects an `observed` claim without evidence, unknown evidence references, or a non-invented Project Rule without a source claim.
+- Next.js 16, React 19, TypeScript
+- React Three Fiber, Three.js, and CSS scroll choreography
+- Bright Data Scraper Studio and Scraping Browser
+- Fireworks OpenAI-compatible inference with Kimi K2.6
+- Zod for contracts and provenance verification
+- Sharp for ordered multimodal contact sheets
+- JSZip for client-side portable artifacts
+- IndexedDB for local session persistence
+- Vercel for deployment; no database and no authentication are required
 
 ## Experience Pack
 
 ```text
 experience-pack/
+├── README.md
 ├── manifest.json
 ├── genome/
-│   ├── EXPERIENCE_GENOME.json
 │   ├── PROJECT_GENOME.json
-│   ├── EVIDENCE.json
-│   └── TRACES.json
+│   └── EVIDENCE.json
+├── evidence/
+│   └── 01-reference-moment-1.jpg
 ├── design/
-│   ├── FORM.md
-│   ├── MOTION.md
-│   ├── SCENE.md
-│   ├── AFFECT.md
-│   └── TOKENS.json
+│   ├── PRINCIPLES.md
+│   └── UNRESOLVED.md
 ├── intent/
 │   ├── PROJECT_BRIEF.md
 │   └── ANTI_COPY.md
@@ -150,49 +143,55 @@ experience-pack/
 ```bash
 corepack enable
 pnpm install
+cp .env.example .env.local
 pnpm dev
 ```
 
-Then open `http://localhost:3000`.
+Open `http://localhost:3000`.
+
+Required server-side variables:
+
+```bash
+BRIGHT_DATA_API_TOKEN=
+BRIGHT_DATA_COLLECTOR_ID=
+BRIGHT_DATA_BROWSER_ZONE=cli_browser
+
+MODEL_PROVIDER=fireworks
+MODEL_BASE_URL=https://api.fireworks.ai/inference/v1
+FIREWORKS_API_KEY=
+MODEL_ID=accounts/fireworks/models/kimi-k2p6
+VISION_MODEL_ID=accounts/fireworks/models/kimi-k2p6
+SYNTHESIS_MODEL_ID=accounts/fireworks/models/kimi-k2p6
+INTERPRETER_ENABLE_VISION=true
+```
+
+Secrets remain server-side. Only public, non-login URLs are accepted, private-network destinations are rejected, same-origin API requests are enforced, and capture requests are rate bounded.
 
 Quality gates:
 
 ```bash
+pnpm test
 pnpm lint
 pnpm build
 ```
 
 Submission helpers: [`docs/DEMO_SCRIPT.md`](docs/DEMO_SCRIPT.md) · [`docs/SUBMISSION_COPY.md`](docs/SUBMISSION_COPY.md)
 
-## Environment contract
-
-The checked-in public demo does not require secrets. Operator-only live modes use server-side variables:
-
-```bash
-BRIGHT_DATA_API_TOKEN=
-MODEL_PROVIDER=openrouter
-MODEL_BASE_URL=https://openrouter.ai/api/v1
-MODEL_API_KEY=
-MODEL_ID=stealth/ox-alpha
-```
-
-Secrets never enter client bundles. A provider capability check is required before switching models; OpenAI-compatible transport does not guarantee equivalent structured-output behavior.
-
 ## AI use disclosure
 
-- OpenAI Codex was used for implementation, visual QA, testing and repository maintenance.
-- OpenAI image generation produced the original light monsoon-landscape plate used behind the code-native parallax story; it does not copy a supplied site or copyrighted character.
-- ChatGPT was used as a product-thinking collaborator during scope correction and narrative development.
-- The committed synthesis artifact is a deterministic verified replay. Live model generation is kept behind the provider boundary so the public demo remains stable and does not expose keys.
+- OpenAI Codex assisted implementation, research, testing, visual QA, deployment, and repository maintenance.
+- ChatGPT was used as a product-thinking collaborator during the architecture and narrative critique.
+- OpenAI image generation produced an original light monsoon-landscape plate used behind the code-native parallax story.
+- Fireworks-hosted Kimi K2.6 performs live evidence interpretation and Project Genome synthesis.
 
 ## Truth and anti-copy contract
 
-- Observations, inferences, user statements and unresolved dimensions are visibly labeled.
-- Action-conditioned change is not automatically promoted to universal causation.
-- Project synthesis stores **inherited / mutated / rejected / invented** provenance.
-- Outputs explicitly prohibit copying source geometry, timing values, copy, camera paths, layout chrome or brand language.
-- Only public, non-login, non-personal data is in scope.
+- Observations, inferences, human statements, and unresolved dimensions remain visibly distinct.
+- Three sampled frames do not establish frame-perfect timing, easing, hover physics, audio, or universal causation.
+- Every non-invented project rule must retain a judged source reference.
+- Invented rules cite no source evidence.
+- Outputs prohibit reusing source assets, copy, layout, geometry, exact timing, camera paths, or brand language.
 
 ---
 
-> **The machine records what happened. The human tells it what mattered.**
+> **The machine records what happened. The human decides what mattered.**

@@ -6,44 +6,53 @@ EXPERIENCE//COMPILER
 
 ## One-line description
 
-Turn observed web experience plus human judgment into portable design rules for any coding AI—without cloning references.
+Turn live web experience plus human judgment into portable design rules for any coding AI—without cloning references.
 
 ## Short description
 
-Most design tools stop at screenshots or DOM structure. Experience Compiler begins as a light parallax story that teaches the gap between reading and understanding, then transforms in place into a guided product. A custom Bright Data Scraper Studio collector preserves ordered states, triggering actions and structured evidence. A human explicitly marks what they prefer or reject. The system compiles that evidence and judgment into an Experience Genome, synthesizes an original Project Genome, verifies provenance, and downloads a portable Experience Pack for Codex, Claude, Gemini, Cursor and Copilot.
+Experience Compiler visits any public interactive website, captures an ordered browser journey with Bright Data, and sends a compact rendered contact sheet plus measured evidence to a Fireworks multimodal model. The machine separates observation, interpretation, and unknowns; the human explicitly decides what mattered. A second bounded model role synthesizes those judged principles into an original Project Genome, while deterministic verification enforces provenance, preference lanes, uncertainty, and anti-copy constraints. The result downloads as a portable Experience Pack for Codex, Claude, Gemini, Cursor, and Copilot.
 
 ## What it does
 
-- Captures public interactive references as structured state/action/state traces, including a persisted real Razorpay Buildathon run.
-- Presents the complete evidence-to-pack workflow as a one-page guided quest, with a separate custom-reference capture composer.
-- Separates observed, inferred, user-specified and unresolved claims.
-- Stores human taste independently as preferred, rejected, neutral or unreviewed.
-- Lets every Genome Rule be inspected back to evidence and forward to a Project Rule.
-- Synthesizes inherited, mutated, rejected and invented rules with anti-copy constraints.
-- Compiles a real ZIP artifact with JSON, evidence, design specifications and agent adapters.
-- Demonstrates controlled schema drift and Bright Data self-healing on the same collector ID.
+- Accepts an arbitrary public URL instead of selecting a prepared site.
+- Uses a custom Bright Data collector for ordered state/action/state evidence.
+- Uses Bright Data Scraping Browser for real rendered frames and browser measurements.
+- Uses Fireworks-hosted Kimi K2.6 to interpret rendered evidence and synthesize a Project Genome.
+- Separates observed, inferred, human-specified, and unresolved claims.
+- Stores human preference independently as Keep or Leave behind, with an optional explanation.
+- Synthesizes inherited, mutated, rejected, and invented rules.
+- Rejects invalid source citations and crossed judgment lanes with a deterministic provenance verifier.
+- Downloads a real ZIP containing evidence, screenshots, project rules, unknowns, anti-copy constraints, and coding-agent adapters.
+- Persists the workshop locally without requiring login or a database.
+- Demonstrates controlled same-collector recovery separately in Drift Lab.
 
-## How Bright Data is used
+## Why Bright Data is essential
 
-Bright Data is the grounding layer. Two custom Scraper Studio collectors produced real public Linear and Razorpay captures plus separate controlled drift artifacts. The baseline, broken, heal, recovery and real-web outputs are versioned in `evidence/brightdata/`, including stable `c_*` identities. Eight of 5,000 record credits were used in total; a replayed judge journey uses zero additional credits.
+Bright Data is the product's perception layer. Scraper Studio establishes the bounded ordered journey, while Scraping Browser establishes what the page actually rendered at sampled scroll positions. Without both, the system would fall back to a screenshot describer or DOM summarizer and could not expose an inspectable experience trace.
+
+If the rendered layer fails, the interface labels the run as structured-only and the model does not receive or claim visual input. A failed live collection never silently becomes prepared replay data.
 
 ## Architecture
 
-`Bright Data collector → structured records → Experience Trace → Experience Genome + human judgment → Project Genome → provenance verification → Experience Pack`
+`public URL → Bright Data structured journey + rendered frames → Evidence Interpreter → human taste gate → Genome Synthesizer → deterministic provenance verifier → Project Genome → Experience Pack`
 
-The system is a deterministic compiler pipeline rather than a multi-agent swarm: Ground → Abstract → Judge → Synthesize → Verify → Compile.
+This is a bounded compiler pipeline, not an agent swarm. The two model roles have distinct contracts; collection, human judgment, provenance verification, persistence, and artifact generation remain deterministic.
 
 ## What we are proud of
 
-The key primitive is inspectability. A judge can click one rule and see exactly what happened, what the system inferred, what the human preferred, how the principle changed during synthesis, and where it appears in final coding-agent context. The product also states what it failed to understand instead of manufacturing confidence.
+The key primitive is an inspectable chain:
+
+`real experience → evidence → inference → human judgment → reusable rule → project transformation → agent context`
+
+A judge can see the original rendered moments, what the model directly observed, what it only inferred, what remained unknown, what the human selected, and how that decision entered the final Project Genome.
 
 ## AI disclosure
 
-OpenAI Codex assisted implementation, testing, visual QA and repository maintenance. OpenAI image generation created the original archive concept art. ChatGPT helped challenge product scope and narrative. The public synthesis artifact is a deterministic replay; live model generation uses a server-only OpenAI-compatible provider boundary when credentials are configured.
+OpenAI Codex assisted implementation, research, testing, visual QA, deployment, and repository maintenance. ChatGPT helped critique product scope and narrative. OpenAI image generation produced an original landscape plate for the landing story. Fireworks-hosted Kimi K2.6 performs live multimodal interpretation and synthesis.
 
 ## Links
 
 - Live: https://experience-genome.vercel.app
 - Source: https://github.com/KabeerY/experience-genome
-- Genome Lens: https://experience-genome.vercel.app/studio
+- Live compiler: https://experience-genome.vercel.app/#capture-lab
 - Drift Lab: https://experience-genome.vercel.app/lab/drift
