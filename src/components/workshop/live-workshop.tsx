@@ -21,6 +21,7 @@ import {
   ShieldCheck,
   Sparkles,
   ThumbsDown,
+  Trash2,
   WandSparkles,
 } from "lucide-react";
 import { type FormEvent, useEffect, useMemo, useRef, useState } from "react";
@@ -29,6 +30,7 @@ import {
   evidenceInterpretationSchema,
   type EvidenceInterpretation,
 } from "@/lib/agents/schema";
+import { conciseEvidenceSummary } from "@/lib/agents/provenance";
 import {
   captureErrorSchema,
   liveCaptureSchema,
@@ -354,6 +356,33 @@ export function LiveWorkshop() {
     setDraftJudgment(reference.decision?.judgment ?? null);
   }
 
+  function removeReference(key: string) {
+    const removedIndex = references.findIndex((reference) => reference.key === key);
+    if (removedIndex < 0) return;
+
+    const remainingReferences = references.filter((reference) => reference.key !== key);
+    const nextActive = activeKey === key
+      ? remainingReferences[Math.min(removedIndex, remainingReferences.length - 1)] ?? null
+      : remainingReferences.find((reference) => reference.key === activeKey)
+        ?? remainingReferences[0]
+        ?? null;
+
+    setReferences(remainingReferences);
+    setActiveKey(nextActive?.key ?? null);
+    setCaptureStatus(remainingReferences.length > 0 ? "ready" : "idle");
+    setCaptureError(null);
+    setProject(null);
+    setCompileStatus("idle");
+    setCompileError(null);
+    setDraftRule(
+      nextActive?.decision?.rule
+        ?? nextActive?.interpretation?.candidateRule
+        ?? (nextActive?.interpretationStatus === "error" ? nextActive.capture.finding.candidateRule : ""),
+    );
+    setDraftNote(nextActive?.decision?.note ?? "");
+    setDraftJudgment(nextActive?.decision?.judgment ?? null);
+  }
+
   async function compileProject() {
     if (!decidedReferences.length) return;
     setCompileStatus("thinking");
@@ -554,25 +583,40 @@ export function LiveWorkshop() {
             </div>
             <div className={styles.referenceList}>
               {references.map((reference, index) => (
-                <button
+                <div
+                  className={styles.referenceItem}
                   data-active={reference.key === activeKey}
                   key={reference.key}
-                  onClick={() => selectReference(reference)}
-                  type="button"
                 >
-                  <i>{index + 1}</i>
-                  <span><strong>{reference.capture.source.name}</strong><small>{reference.capture.source.host}</small></span>
-                  {reference.decision ? (
-                    <b data-judgment={reference.decision.judgment}>
-                      {reference.decision.judgment === "preferred" ? <Heart size={13} /> : <ThumbsDown size={13} />}
-                    </b>
-                  ) : <ChevronRight size={16} />}
-                </button>
+                  <button
+                    aria-pressed={reference.key === activeKey}
+                    className={styles.referenceSelect}
+                    onClick={() => selectReference(reference)}
+                    type="button"
+                  >
+                    <i>{index + 1}</i>
+                    <span><strong>{reference.capture.source.name}</strong><small>{reference.capture.source.host}</small></span>
+                    {reference.decision ? (
+                      <b data-judgment={reference.decision.judgment}>
+                        {reference.decision.judgment === "preferred" ? <Heart size={13} /> : <ThumbsDown size={13} />}
+                      </b>
+                    ) : <ChevronRight size={16} />}
+                  </button>
+                  <button
+                    aria-label={`Remove reference ${index + 1}: ${reference.capture.source.name}`}
+                    className={styles.removeReference}
+                    onClick={() => removeReference(reference.key)}
+                    title="Remove this capture"
+                    type="button"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
               ))}
             </div>
             <button className={styles.addReference} onClick={captureAnother} type="button"><Plus size={15} /> Capture another URL</button>
             <button className={styles.resetSession} onClick={startFreshSession} type="button"><RotateCcw size={13} /> Start a fresh session</button>
-            <p>Each reference above came from a separate live browser run in this session.</p>
+            <p>Each reference came from a separate live browser run. It is stored only in this browser—not shared with other visitors.</p>
           </aside>
 
           {activeReference && (
@@ -700,17 +744,17 @@ export function LiveWorkshop() {
               {activeFinding && <section className={styles.truthGrid}>
                 <article>
                   <span className={styles.observedLabel}><Eye size={14} /> OBSERVED</span>
-                  <h4>{activeFinding.observation}</h4>
+                  <h4>{conciseEvidenceSummary(activeFinding.observation)}</h4>
                   <p>Grounded in the ordered moments above.</p>
                 </article>
                 <article>
                   <span className={styles.inferredLabel}><WandSparkles size={14} /> INFERRED</span>
-                  <h4>{activeFinding.inference}</h4>
+                  <h4>{conciseEvidenceSummary(activeFinding.inference)}</h4>
                   <p>A bounded interpretation—not a direct measurement.</p>
                 </article>
                 <article>
                   <span className={styles.unknownLabel}><AlertTriangle size={14} /> STILL UNKNOWN</span>
-                  <h4>{activeFinding.caveat}</h4>
+                  <h4>{conciseEvidenceSummary(activeFinding.caveat)}</h4>
                   <p>Unknowns remain visible instead of being filled with confident prose.</p>
                 </article>
               </section>}

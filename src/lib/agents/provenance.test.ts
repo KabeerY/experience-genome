@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { enforceEvidenceProvenance } from "@/lib/agents/provenance";
+import { conciseEvidenceSummary, enforceEvidenceProvenance } from "@/lib/agents/provenance";
 
 const draft = {
   observation: "Three rendered moments show a fixed canvas.",
@@ -52,5 +52,42 @@ describe("enforceEvidenceProvenance", () => {
     );
 
     expect(result.observation).toBe("Three ordered moments were captured.");
+  });
+
+  it("keeps model summaries compact even when the model ignores the prompt limit", () => {
+    const verbose = `${"A grounded detail repeats across the captured moments. ".repeat(8)}A final detail.`;
+    const result = enforceEvidenceProvenance(
+      {
+        ...draft,
+        observation: verbose,
+        inference: verbose,
+        candidateRule: verbose,
+        caveat: verbose,
+      },
+      new Set([1, 2, 3]),
+      "Three ordered moments were captured.",
+    );
+
+    expect(result.observation.length).toBeLessThanOrEqual(180);
+    expect(result.inference.length).toBeLessThanOrEqual(180);
+    expect(result.caveat.length).toBeLessThanOrEqual(180);
+    expect(result.candidateRule.length).toBeLessThanOrEqual(220);
+    expect(result.observation.endsWith(".")).toBe(true);
+  });
+
+  it("normalizes whitespace and truncates at a word boundary", () => {
+    const result = conciseEvidenceSummary(`  ${"scroll linked reveal ".repeat(20)}  `, 80);
+
+    expect(result.length).toBeLessThanOrEqual(80);
+    expect(result).not.toContain("  ");
+    expect(result.endsWith("…")).toBe(true);
+  });
+
+  it("does not leave a dangling numbered-list marker", () => {
+    const verbose = "Direct evidence includes: 1. The opening is visible. 2. The heading changes after scrolling. 3. Another detail follows with enough words to exceed the compact summary limit.";
+    const result = conciseEvidenceSummary(verbose, 120);
+
+    expect(result).toBe("Direct evidence includes: 1. The opening is visible. 2. The heading changes after scrolling.");
+    expect(result).not.toMatch(/\s\d+\.$/);
   });
 });

@@ -216,15 +216,19 @@
 .shelfHeading small { color: #6f817b; font: 800 8px/1 var(--font-geist-mono), monospace; letter-spacing: .1em; }
 .shelfHeading strong { font: 590 23px/1 var(--font-story-serif), Georgia, serif; }
 .referenceList { display: grid; gap: 8px; }
-.referenceList > button { display: grid; width: 100%; grid-template-columns: auto 1fr auto; align-items: center; gap: 11px; padding: 13px; border: 1px solid transparent; border-radius: 14px; text-align: left; }
-.referenceList > button[data-active="true"] { border-color: rgba(34, 95, 179, 0.24); background: #fffdf6; box-shadow: 0 10px 25px rgba(41, 72, 60, 0.08); }
-.referenceList > button > i { display: grid; width: 30px; height: 30px; place-items: center; border-radius: 50%; color: #225fb3; background: #dce8fa; font: normal 800 9px/1 var(--font-geist-mono), monospace; }
-.referenceList > button > span { display: grid; min-width: 0; gap: 4px; }
+.referenceItem { display: grid; grid-template-columns: minmax(0, 1fr) 38px; align-items: stretch; overflow: hidden; border: 1px solid transparent; border-radius: 14px; transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease; }
+.referenceItem[data-active="true"] { border-color: rgba(34, 95, 179, 0.24); background: #fffdf6; box-shadow: 0 10px 25px rgba(41, 72, 60, 0.08); }
+.referenceSelect { display: grid; width: 100%; min-width: 0; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 11px; padding: 13px 8px 13px 13px; text-align: left; }
+.referenceSelect > i { display: grid; width: 30px; height: 30px; place-items: center; border-radius: 50%; color: #225fb3; background: #dce8fa; font: normal 800 9px/1 var(--font-geist-mono), monospace; }
+.referenceSelect > span { display: grid; min-width: 0; gap: 4px; }
 .referenceList strong { overflow: hidden; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
 .referenceList small { overflow: hidden; color: #7b8a85; font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
 .referenceList b { display: grid; width: 28px; height: 28px; place-items: center; border-radius: 50%; }
 .referenceList b[data-judgment="preferred"] { color: #2f7451; background: #d9eedc; }
 .referenceList b[data-judgment="rejected"] { color: #a04f35; background: #f6ddcc; }
+.removeReference { display: grid; width: 38px; place-items: center; color: #87938f; border-left: 1px solid rgba(23,59,60,.08); background: rgba(255,255,255,.22); transition: color 150ms ease, background 150ms ease; }
+.removeReference:hover,
+.removeReference:focus-visible { color: #a54529; background: #ffeadc; }
 .addReference { display: flex; width: 100%; min-height: 42px; align-items: center; justify-content: center; gap: 7px; margin-top: 14px; border: 1px dashed rgba(23,59,60,.25); border-radius: 12px; color: #225fb3; font-size: 10px; font-weight: 760; }
 .resetSession { display: flex; width: 100%; align-items: center; justify-content: center; gap: 6px; margin-top: 10px; color: #778782; font-size: 8px; font-weight: 720; }
 .referenceShelf > p { margin: 20px 8px 0; color: #7c8d87; font-size: 10px; line-height: 1.5; }
@@ -289,7 +293,7 @@
 .observedLabel { color: #225fb3; background: #dfeafa; }
 .inferredLabel { color: #72511c; background: #f2e5bb; }
 .unknownLabel { color: #a2522e; background: #f7d7ba; }
-.truthGrid h4 { margin: 22px 0 12px; font: 560 clamp(20px, 2vw, 28px)/1.15 var(--font-story-serif), Georgia, serif; }
+.truthGrid h4 { margin: 22px 0 12px; font: 560 clamp(20px, 1.65vw, 25px)/1.2 var(--font-story-serif), Georgia, serif; }
 .truthGrid p { margin: 0; color: #61736e; font-size: 13px; line-height: 1.5; }
 
 .claimSection { padding: clamp(28px, 4vw, 50px); border-bottom: 1px solid rgba(23,59,60,.11); background: #f4f0e5; }
@@ -414,7 +418,7 @@
   .evidenceWorkspace { grid-template-columns: 1fr; }
   .referenceShelf { border-right: 0; border-bottom: 1px solid rgba(23,59,60,.12); }
   .referenceList { display: flex; overflow-x: auto; }
-  .referenceList > button { min-width: 210px; }
+  .referenceItem { min-width: 245px; }
   .truthGrid { grid-template-columns: 1fr; }
   .truthGrid article { min-height: auto; border-right: 0; border-bottom: 1px solid rgba(23,59,60,.11); }
   .judgmentSection { grid-template-columns: 1fr; }

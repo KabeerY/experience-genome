@@ -109,7 +109,9 @@ async function enterInteractiveExperience(page: Page) {
   if ((await gate.count()) === 0 || !(await gate.isVisible())) return false;
 
   await gate.click({ timeout: 3_000 });
-  await page.waitForTimeout(1_500);
+  // Gated cinematic sites often remove the overlay before their first scene is painted.
+  // Let the scene, fonts, and WebGL layers settle before frame one is recorded.
+  await page.waitForTimeout(3_200);
   await waitForLoadingScreen(page);
   return true;
 }
@@ -225,7 +227,7 @@ export async function captureRenderedJourney(url: URL): Promise<RenderedJourney>
         const maxScroll = Math.max(0, document.documentElement.scrollHeight - innerHeight);
         scrollTo({ top: maxScroll * progress, behavior: "instant" });
       }, position);
-      await page.waitForTimeout(index === 0 ? 450 : 1_050);
+      await page.waitForTimeout(index === 0 ? 900 : 1_050);
       try {
         moments.push(await collectRenderedMoment(page, cdp, index + 1, position));
       } catch (error) {

@@ -55,7 +55,7 @@ export async function interpretCapture(rawCapture: unknown) {
       "Never claim exact easing, continuous timing, hover physics, audio behavior, authorial intent, or causality unless supplied evidence establishes it.",
       "Observed claims must cite at least one valid moment number. Inferred claims may cite supporting moments but must use calibrated language.",
       "Create an abstract reusable experience rule, never a request to copy source assets, wording, composition, geometry, branding, or exact motion.",
-      "Write for a product designer: specific, plain, concise, and useful. Keep each top-level summary under 280 characters and the candidate rule under 260 characters.",
+      "Write for a product designer: specific, plain, concise, and useful. Keep each top-level summary to one sentence under 180 characters and the candidate rule under 220 characters.",
     ].join(" "),
     prompt: JSON.stringify({
       task: "Interpret this live web experience and produce provenance-safe claims.",
