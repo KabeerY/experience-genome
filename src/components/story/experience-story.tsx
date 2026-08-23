@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { type CSSProperties, useEffect, useMemo, useState } from "react";
+import { type CSSProperties, type FormEvent, useEffect, useMemo, useState } from "react";
 
 import { downloadExperiencePack } from "@/lib/compiler/experience-pack";
 import {
@@ -41,6 +41,11 @@ import styles from "./experience-story.module.css";
 type WorkshopMode = "choose" | "guided" | "custom";
 type ReferenceChoice = "archive" | "linear";
 type Judgment = "unreviewed" | "preferred" | "rejected";
+type CustomBrief = {
+  host: string;
+  note: string;
+  url: string;
+};
 
 function SectionIndex({ children }: { children: string }) {
   return <span className={styles.sectionIndex}>{children}</span>;
@@ -51,7 +56,7 @@ function StoryWorkshop() {
   const [reference, setReference] = useState<ReferenceChoice>("archive");
   const [judgment, setJudgment] = useState<Judgment>("unreviewed");
   const [packStatus, setPackStatus] = useState<"idle" | "working" | "done">("idle");
-  const [customPrepared, setCustomPrepared] = useState(false);
+  const [customBrief, setCustomBrief] = useState<CustomBrief | null>(null);
 
   const trace = reference === "linear" ? realWebTrace : demoTrace;
   const questStep =
@@ -102,6 +107,22 @@ function StoryWorkshop() {
     setPackStatus("working");
     await downloadExperiencePack({ traces: demoTraces, genomes: guidedGenomes, project: guidedProject });
     setPackStatus("done");
+  }
+
+  function prepareCustomBrief(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const url = String(data.get("referenceUrl") ?? "").trim();
+    const suppliedNote = String(data.get("humanNote") ?? "").trim();
+    const parsed = new URL(url);
+
+    setCustomBrief({
+      host: parsed.hostname.replace(/^www\./, ""),
+      note:
+        suppliedNote ||
+        "Preserve the scroll rhythm, layered motion, section transitions, and the order in which meaning is revealed.",
+      url: parsed.toString(),
+    });
   }
 
   return (
@@ -249,16 +270,29 @@ function StoryWorkshop() {
             <h3>Which world should we observe?</h3>
             <p>A URL supplies the experience. Your note supplies the normative question the machine cannot answer alone.</p>
           </div>
-          <form onSubmit={(event) => { event.preventDefault(); setCustomPrepared(true); }}>
-            <label>PUBLIC REFERENCE URL<input placeholder="https://example.com" required type="url" /></label>
-            <label>WHAT MATTERED TO YOU?<textarea placeholder="I love how the scene moves before the headline arrives…" required rows={4} /></label>
-            <button type="submit"><Play size={17} /> Prepare capture brief</button>
-          </form>
-          {customPrepared && (
-            <div className={styles.customNotice}>
-              <Fingerprint size={22} />
-              <div><strong>Capture brief ready.</strong><p>Live public collection is operator-gated to protect the remaining 4,993 judge credits. Guided Quest remains zero-cost and fully functional.</p></div>
-              <button onClick={() => { setMode("guided"); setReference("linear"); }} type="button">Continue with verified evidence <ArrowRight size={16} /></button>
+          {!customBrief ? (
+            <form onSubmit={prepareCustomBrief}>
+              <label>PUBLIC REFERENCE URL<input name="referenceUrl" placeholder="https://example.com" required type="url" /></label>
+              <label>WHAT MATTERED TO YOU? <span>OPTIONAL</span><textarea name="humanNote" placeholder="Leave blank and we’ll inspect scroll rhythm, layered motion, transitions, and reveal order." rows={4} /></label>
+              <button type="submit"><Play size={17} /> Prepare capture brief</button>
+              <small className={styles.formHint}>This prepares the observation plan locally. It does not spend a Bright Data credit.</small>
+            </form>
+          ) : (
+            <div aria-live="polite" className={styles.customNotice} role="status">
+              <div className={styles.noticeHeading}>
+                <span><Fingerprint size={22} /></span>
+                <div><small>READY · 0 CREDITS SPENT</small><strong>Capture brief ready for {customBrief.host}.</strong></div>
+              </div>
+              <dl className={styles.briefDetails}>
+                <div><dt>REFERENCE</dt><dd>{customBrief.url}</dd></div>
+                <div><dt>OBSERVE</dt><dd>Scroll states, pinned elements, depth cues, transition order, and semantic reveals.</dd></div>
+                <div><dt>HUMAN QUESTION</dt><dd>{customBrief.note}</dd></div>
+              </dl>
+              <p>Live public collection remains operator-gated to protect 4,993 judge credits. The verified quest below demonstrates the complete evidence-to-genome path.</p>
+              <div className={styles.noticeActions}>
+                <button className={styles.secondaryNoticeAction} onClick={() => setCustomBrief(null)} type="button">Use a different URL</button>
+                <button onClick={() => { setMode("guided"); setReference("linear"); }} type="button">Continue with verified evidence <ArrowRight size={16} /></button>
+              </div>
             </div>
           )}
         </div>
